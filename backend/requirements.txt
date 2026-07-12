@@ -1,0 +1,6 @@
+fastapi
+uvicorn[standard]
+pymodbus
+opencv-python
+python-multipart
+anomalib

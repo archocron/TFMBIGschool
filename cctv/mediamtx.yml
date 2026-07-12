@@ -1,0 +1,124 @@
+# MediaMTX v1.19.1 configuration - optimized for LOW LATENCY RTSP -> WebRTC
+# Target: <300-500ms end-to-end latency
+# Part of TFMBigSchool CCTV integration
+
+###############################################
+# Global settings
+###############################################
+
+logLevel: info
+logDestinations: [stdout]
+logStructured: false
+logFile: ""
+
+readTimeout: 5s
+writeTimeout: 5s
+writeQueueSize: 32
+udpMaxPayloadSize: 1452
+udpReadBufferSize: 0
+
+# Authentication
+authMethod: internal
+authInternalUsers:
+  - user: any
+    pass:
+    ips: []
+    permissions:
+      - action: publish
+      - action: read
+      - action: playback
+      - action: api
+  - user: any
+    pass:
+    ips: ["127.0.0.1", "::1"]
+    permissions:
+      - action: api
+      - action: metrics
+      - action: pprof
+
+# Control API
+api: true
+apiAddress: :9997
+apiEncryption: false
+apiAllowOrigins: ["*"]
+
+###############################################
+# RTSP server
+###############################################
+rtsp: true
+rtspTransports: [udp]
+rtspEncryption: "no"
+rtspAddress: :8554
+rtspsAddress: :8322
+rtpAddress: :8000
+rtcpAddress: :8001
+rtspAuthMethods: [basic]
+rtspTrustedProxies: []
+
+###############################################
+# RTMP server
+###############################################
+rtmp: true
+rtmpEncryption: "no"
+rtmpAddress: :1935
+rtmpsAddress: :1936
+rtmpTrustedProxies: []
+
+###############################################
+# HLS server (low latency)
+###############################################
+hls: true
+hlsAddress: :8888
+hlsEncryption: false
+hlsAllowOrigins: ["*"]
+hlsTrustedProxies: []
+hlsAlwaysRemux: false
+hlsVariant: lowLatency
+hlsSegmentCount: 2
+hlsSegmentDuration: 500ms
+hlsPartDuration: 100ms
+hlsSegmentMaxSize: 50M
+hlsDirectory: ""
+hlsMuxerCloseAfter: 60s
+hlsCDNSecret: ""
+
+###############################################
+# WebRTC server
+###############################################
+webrtc: true
+webrtcAddress: :8889
+webrtcEncryption: false
+webrtcAllowOrigins: ["*"]
+webrtcTrustedProxies: []
+webrtcLocalUDPAddress: :8189
+webrtcLocalTCPAddress: ""
+webrtcIPsFromInterfaces: true
+webrtcIPsFromInterfacesList: []
+webrtcAdditionalHosts: []
+webrtcICEServers2: []
+webrtcSTUNGatherTimeout: 1s
+webrtcHandshakeTimeout: 2s
+webrtcTrackGatherTimeout: 500ms
+
+###############################################
+# SRT server
+###############################################
+srt: true
+srtAddress: :8890
+
+###############################################
+# Default path settings
+###############################################
+pathDefaults:
+  source: publisher
+
+###############################################
+# Path settings
+###############################################
+paths:
+  # Main camera stream - FFmpeg publishes here
+  cam:
+    source: publisher
+
+  all_others:
+    source: publisher

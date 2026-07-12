@@ -1,0 +1,55 @@
+# =============================================================================
+# Docker Compose - Infraestructura CCTV + Web (SOLO)
+# =============================================================================
+# IMPORTANTE: Este docker-compose NO incluye el backend FastAPI ni FFmpeg
+# porque en Windows Docker Desktop (WSL2) los contenedores Linux NO pueden:
+#   1. Acceder a la GPU NVIDIA (PyTorch CUDA)
+#   2. Acceder a la webcam USB del host
+#   3. Conectar al PLC por Modbus TCP en red link-local 169.254.x.x
+#   4. Conectar a la camara IP PoE en red link-local 169.254.x.x
+#
+# Por tanto, para el funcionamiento COMPLETO usa:  start-all.bat
+# (levanta MediaMTX + FFmpeg + Backend todos nativamente en Windows)
+#
+# Este docker-compose es util si quieres:
+#   - Probar solo el frontend + CCTV WebRTC
+#   - Levantar MediaMTX en contenedor Linux mientras backend corre nativo
+# =============================================================================
+
+services:
+  mediamtx:
+    image: bluenviron/mediamtx:latest
+    container_name: tfm-mediamtx
+    restart: unless-stopped
+    ports:
+      - "8554:8554"       # RTSP input
+      - "1935:1935"       # RTMP input
+      - "8888:8888"       # HLS
+      - "8889:8889"       # WebRTC HTTP
+      - "8189:8189/udp"   # WebRTC ICE/UDP
+      - "9997:9997"       # Control API
+    volumes:
+      - ./cctv/mediamtx.yml:/mediamtx.yml:ro
+    command: ["/mediamtx.yml"]
+    networks:
+      - tfm-network
+
+  # Nginx sirve el frontend estatico y hace proxy al backend nativo
+  # El backend debe estar corriendo en Windows:  cd backend && python -m uvicorn main:app --host 0.0.0.0 --port 8000
+  web:
+    image: nginx:alpine
+    container_name: tfm-web
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    volumes:
+      - ./frontend:/usr/share/nginx/html:ro
+      - ./cctv/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - tfm-network
+
+networks:
+  tfm-network:
+    driver: bridge

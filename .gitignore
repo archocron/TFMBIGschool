@@ -1,0 +1,56 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Entornos virtuales
+venv/
+env/
+ENV/
+.venv/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Datos y modelos generados
+backend/images/
+backend/training/
+backend/models/
+backend/heatmaps/
+*.ckpt
+*.npz
+
+# Logs
+*.log
+
+# Coverage y datos generados
+.coverage
+htmlcov/
+backend/results/
+
+# Docker
+.dockerignore
+
+# Windows
+*.bat.meta
+
+# Archivos binarios / ejecutables
+*.exe
+*.dll
+
+# Certificados SSL auto-generados
+*.crt
+*.key
+
+# Directorios de streaming
+RTMP/
