@@ -297,6 +297,17 @@ cd backend
 - Seguridad en el desarrollo: configuración por entornos, separación de secretos y buenas prácticas.
 - Documentación técnica dirigida a equipos de desarrollo y operaciones.
 
+## Dependencias externas no incluidas en Git
+
+Algunos ejecutables y herramientas nativas están **excluidos del repositorio** (`.gitignore`) por ser binarios de terceros o muy pesados. Debes descargarlos manualmente y colocarlos en las rutas indicadas:
+
+| Archivo | Ubicación | Origen / Descarga |
+|---------|-----------|-------------------|
+| `mediamtx.exe` | Raíz del proyecto | [bluenviron/mediamtx](https://github.com/bluenviron/mediamtx/releases) – Descarga la release para Windows (`mediamtx_vX.Y.Z_windows_amd64.zip`) y extrae el `.exe` en la raíz. |
+| `tools/ffmpeg.exe` | `tools/ffmpeg.exe` | [ffmpeg.org](https://ffmpeg.org/download.html) – Versión estática para Windows (`ffmpeg-release-essentials.7z`); copia `ffmpeg.exe` dentro de `tools/`. |
+
+> **Nota:** Docker Compose levanta su propio contenedor de MediaMTX (`bluenviron/mediamtx`), por lo que no necesitas el `.exe` nativo si usas la Opción 2 (Docker). FFmpeg sigue siendo necesario nativamente porque el contenedor Docker no accede a la red link-local de la cámara IP.
+
 ## Notas
 
 - Si no tienes PLC conectado, el backend seguirá funcionando y podrás usar **Captura manual** desde la API.
