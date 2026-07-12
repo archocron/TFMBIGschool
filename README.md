@@ -1,95 +1,67 @@
 # Conveyor Camera Monitor
 
-Proyecto de inspección visual automática con **M-Duino 21+** (Industrial Shields) + Webcam + IA (PatchCore). El sensor de la cinta detecta piezas, el PC captura imagen e infiere en GPU (RTX 4070). Si la pieza es defectuosa (NG), el PC ordena al PLC parar la cinta. Todo se controla desde un frontend web.
+## a. Descripción general del proyecto
 
-## Estructura
+**Conveyor Camera Monitor** es un sistema de inspección visual automática para líneas de producción industriales. El proyecto integra hardware industrial (PLC M-Duino 21+), visión por computador (webcam), inteligencia artificial (detección de anomalías con PatchCore) y un backend web para el control y monitorización en tiempo real.
 
+El flujo de trabajo es el siguiente: un sensor fotoeléctrico detecta la llegada de una pieza a la cinta transportadora y ordena la parada inmediata. El PC captura una imagen de alta resolución, la procesa mediante un modelo de IA entrenado para detectar defectos, y decide si la pieza es válida (OK) o defectuosa (NG). Si es OK, la cinta se reanuda automáticamente; si es NG, la cinta permanece parada hasta que un operador revise la pieza y pulse continuar. Todo el proceso se visualiza desde un frontend web accesible en la red local.
+
+Este proyecto ha sido desarrollado como Trabajo de Fin de Máster (TFM) aplicando conocimientos de desarrollo de software, arquitectura de sistemas, inteligencia artificial, calidad de código e integración hardware-software.
+
+> **Asistente de IA utilizado:** El desarrollo, refactorización, testing y documentación de este proyecto han sido potenciados con el asistente de código **Kimi K2.6** (OpenCode), integrado en el flujo de trabajo mediante VS Code y el modelo de IA local.
+
+## b. Stack tecnológico utilizado
+
+| Capa | Tecnología | Uso |
+|------|-----------|-----|
+| **Backend** | Python 3.12 | Lenguaje principal del servidor |
+| | FastAPI + Uvicorn | API REST y servidor ASGI |
+| | OpenCV (cv2) | Captura de imágenes desde webcam |
+| | PyTorch + CUDA 12.4 | Inferencia del modelo de IA en GPU (RTX 4070) |
+| | Anomalib (PatchCore) | Framework de detección de anomalías visuales |
+| | NumPy, Matplotlib, scikit-learn | Procesamiento numérico, visualización y métricas |
+| | Pymodbus | Cliente Modbus TCP para comunicación con PLC |
+| | Threading | Gestión de hilos para polling y cooldowns |
+| **Frontend** | HTML5 + CSS3 + JavaScript | Interfaz monolítica sin frameworks pesados |
+| | WebRTC / H265 | Recepción del stream de la cámara IP en tiempo real |
+| **Hardware** | M-Duino 21+ (Industrial Shields) | PLC con Arduino Mega 2560 + Ethernet W5500 |
+| | Sensor fotoeléctrico | Detección de piezas en la cinta |
+| | Relé de parada | Control de la cinta transportadora |
+| | Webcam USB 4MP | Captura de imágenes para inspección |
+| | Cámara IP PoE (Hikvision) | CCTV en vivo vía RTSP/WebRTC |
+| **Infraestructura** | MediaMTX | Servidor de streaming RTMP/WebRTC |
+| | FFmpeg | Puente RTSP → RTMP para la cámara IP |
+| | Nginx (Docker) | Proxy web opcional |
+| | Docker Compose | Orquestación de contenedores CCTV |
+| **Calidad** | pytest + pytest-cov + pytest-mock | Tests unitarios, integración y cobertura |
+| | typing (Python) | Type hints en todo el backend |
+| | Git | Control de versiones |
+
+## c. Información sobre su instalación y ejecución
+
+### Requisitos previos
+
+- PC con **GPU NVIDIA** (RTX 4070 recomendado) y drivers actualizados.
+- **Python 3.12** (PyTorch CUDA 12.4 no dispone de wheels para Python 3.14).
+- **Webcam** conectada al PC donde corre el backend.
+- **M-Duino 21+** conectado por cable Ethernet directo al PC (adaptador USB-Ethernet).
+- **Cámara IP PoE** en la misma red link-local (opcional, para CCTV).
+
+### 1. Clonar o descargar el repositorio
+
+```bash
+git clone <url-del-repositorio>
+cd TFMBigSchool
 ```
-TFMBigSchool/
-├── backend/
-│   ├── main.py              # API FastAPI + polling Modbus
-│   ├── modbus_client.py     # Cliente Modbus TCP (lee PLC)
-│   ├── camera.py            # Captura con OpenCV
-│   ├── config.py            # Configuración centralizada (IP del PLC)
-│   ├── find_plc.py          # Script para descubrir la IP del PLC
-│   ├── trainer.py           # Modelo PatchCore + calibración
-│   ├── requirements.txt     # Dependencias Python
-│   └── images/              # Imágenes guardadas
-├── frontend/
-│   └── index.html           # Frontend monolítico (HTML+CSS+JS)
-├── cctv/
-│   ├── mediamtx.yml         # Config MediaMTX (streaming IP PoE)
-│   └── nginx.conf           # Config Nginx (proxy opcional)
-├── arduino/
-│   └── conveyor_modbus_tcp/
-│       └── conveyor_modbus_tcp.ino   # Código M-Duino 21+
-├── mediamtx.exe             # Servidor streaming nativo (Windows)
-├── tools/
-│   └── ffmpeg.exe           # Puente RTSP -> RTMP
-├── start-all.bat            # Inicio unificado: backend + CCTV
-├── stop-all.bat             # Detener todo
-├── docker-compose.yml       # Infraestructura CCTV (MediaMTX + FFmpeg + Nginx)
-├── README.md                # Este archivo (intro + setup)
-└── AGENTS.md                # Detalles técnicos para desarrolladores
-```
 
-> **Para detalles técnicos del hardware (pinout, flujo Modbus, calibración del modelo):** ver `AGENTS.md`.
+> Si no usas Git, descomprime el proyecto en `C:\proyectos\TFMBigSchool`.
 
-## Requisitos de hardware
-
-- **PC con GPU NVIDIA** (RTX 4070 o superior recomendado) + drivers actualizados
-- **Python 3.12** (PyTorch CUDA 12.4 no tiene wheels para 3.14)
-- **Webcam** conectada al PC donde corre el backend
-- **M-Duino 21+** (Industrial Shields) - Arduino Mega 2560 con Ethernet W5500 integrado
-  - Entrada: **I0_0** (pin 2) - Sensor fotoeléctrico de la cinta
-  - Salida: **Q0_0** (pin 3) - Relé de parada de la cinta (HIGH = parada)
-- **Conexión:** Cable Ethernet directo del M-Duino al PC (adaptador USB-Ethernet)
-- **Librerías Arduino:**
-  - `Ethernet` (incluida con placas compatibles)
-  - `ArduinoModbus` (Library Manager de Arduino IDE)
-
-## Configuración de red
-
-Red link-local por cable Ethernet directo:
-- **PC (interfaz USB-Ethernet):** `169.254.241.143`
-- **M-Duino 21+ (PLC):** `169.254.241.100` (fija en el sketch .ino)
-- **Backend:** se conecta a `169.254.241.100:502` (Modbus TCP)
-
-Si necesitas cambiar la IP del PLC, modifica **ambos** archivos con la **misma IP**:
-1. `backend/config.py` → cambia `PLC_HOST`
-2. `arduino/conveyor_modbus_tcp/conveyor_modbus_tcp.ino` → cambia `IPAddress ip(...)`
-
-> **Importante:** Ambos deben coincidir. Después de cambiar el .ino, **vuelve a subir el sketch al M-Duino**.
-
-## Cómo descubrir la IP del PLC (si ya tiene una fija de fábrica)
-
-Si no sabes la IP actual del PLC y quizás ya tiene una configurada, usa el script de escaneo:
+### 2. Crear el entorno virtual e instalar dependencias
 
 ```bash
 cd backend
-.\venv\Scripts\python.exe find_plc.py --scan
-```
-
-Esto escaneará los equipos que respondan en el puerto 502 (Modbus) dentro de la red `169.254.241.x`.
-
-Si quieres probar una IP específica:
-```bash
-.\venv\Scripts\python.exe find_plc.py --host 169.254.241.100
-```
-
-## Instalación del backend
-
-> **Nota GPU:** El entorno virtual debe crearse con **Python 3.12**. Si tienes Python 3.14, PyTorch CUDA no tiene ruedas oficiales aún.
-
-```bash
-cd backend
-# Crea el venv con Python 3.12 explicitamente
 py -3.12 -m venv venv
-
-# Instala dependencias base
 .\venv\Scripts\python.exe -m pip install -r requirements.txt
-
-# Instala PyTorch con soporte CUDA 12.4 (para RTX 4070)
 .\venv\Scripts\python.exe -m pip install torch torchvision --index-url https://download.pytorch.org/whl/cu124
 ```
 
@@ -98,25 +70,23 @@ Verifica que la GPU es detectada:
 .\venv\Scripts\python.exe -c "import torch; print(torch.cuda.get_device_name(0))"
 ```
 
-## Cámara IP PoE (CCTV en vivo)
+### 3. Configurar la red del PLC (si es necesario)
 
-El frontend integra una **cámara IP PoE** en tiempo real (vía WebRTC/MediaMTX) a la derecha de la captura de la webcam:
+La configuración por defecto es:
+- **PC:** `169.254.241.143`
+- **PLC:** `169.254.241.100` (puerto 502 Modbus TCP)
 
-- **Izquierda:** imagen capturada por la webcam (inspección IA)
-- **Derecha:** stream en vivo de la cámara IP PoE (`169.254.241.135:554`)
-- **Debajo:** resultado OK/NG + botón CONTINUAR CINTA
+Si necesitas cambiar la IP del PLC, modifica **ambos** archivos con la **misma IP**:
+1. `backend/config.py` → cambia `PLC_HOST`
+2. `arduino/conveyor_modbus_tcp/conveyor_modbus_tcp.ino` → cambia `IPAddress ip(...)`
 
-Arquitectura CCTV:
-- **MediaMTX** (`localhost:8889`) recibe el stream vía RTMP y lo expone por WebRTC
-- **FFmpeg** hace pull RTSP de la cámara IP y publica RTMP a MediaMTX
-- El frontend se conecta directamente por WebRTC (baja latencia)
+> **Importante:** Después de cambiar el `.ino`, vuelve a subir el sketch al M-Duino.
 
-## Ejecución (inicio unificado)
+### 4. Ejecutar el sistema
 
-### Opción 1: Script nativo recomendado (Windows)
+**Opción A: Script nativo recomendado (Windows)**
 
-Haz doble clic en **`start-all.bat`** (en la raíz del proyecto):
-
+Haz doble clic en `start-all.bat` en la raíz del proyecto:
 ```
 [1/4] Iniciando MediaMTX   -> localhost:8889 (WebRTC)
 [2/4] Esperando MediaMTX   -> 3s
@@ -126,49 +96,15 @@ Haz doble clic en **`start-all.bat`** (en la raíz del proyecto):
 
 Abre el frontend en: **http://localhost:8000**
 
-Para detener todo: **`stop-all.bat`** o cierra las ventanas.
+Para detener todo: `stop-all.bat` o cierra las ventanas.
 
-### Opción 2: Docker Compose (infraestructura CCTV + web)
-
-```bash
-cd C:\proyectos\TFMBigSchool
-docker-compose up -d
-```
-
-Esto levanta:
-- **MediaMTX** en contenedor Linux (`localhost:8889` WebRTC, `localhost:1935` RTMP)
-- **Nginx** sirviendo el frontend en `http://localhost`
-
-**IMPORTANTE — Lo que Docker NO puede hacer en Windows:**
-1. ❌ **Backend FastAPI** (necesita GPU NVIDIA RTX 4070 + PyTorch CUDA + Webcam USB)
-2. ❌ **FFmpeg** (el contenedor Linux no ve la red link-local `169.254.x.x` de la cámara IP)
-3. ❌ **Modbus TCP al PLC** (el contenedor no ve la red link-local del PLC)
-
-**Por tanto, si usas Docker Compose, también debes ejecutar nativamente:**
+**Opción B: Manual (desarrollo / debug)**
 
 ```bash
-# Terminal 1: FFmpeg (puente camara IP -> MediaMTX en Docker)
-cd C:\proyectos\TFMBigSchool
-.\tools\ffmpeg.exe -rtsp_transport udp -i rtsp://admin:@169.254.241.135:554/live -c copy -f flv rtmp://localhost:1935/cam
-
-# Terminal 2: Backend FastAPI (GPU + Webcam + Modbus)
-cd C:\proyectos\TFMBigSchool\backend
-.\venv\Scripts\python.exe -m uvicorn main:app --host 0.0.0.0 --port 8000
-```
-
-Luego abre:
-- **Frontend:** `http://localhost:8080` (servido por Nginx en Docker)
-- **O directamente:** `http://localhost:8000` (servido por FastAPI nativo)
-
-> **Recomendación:** Usa `start-all.bat` (Opción 1) para evitar esta complejidad.
-
-### Opción 3: Manual (desarrollo)
-
-```bash
-# Terminal 1: MediaMTX
+# Terminal 1: Servidor de streaming
 .\mediamtx.exe cctv\mediamtx.yml
 
-# Terminal 2: FFmpeg (puente camara IP)
+# Terminal 2: Puente RTSP → RTMP
 .\tools\ffmpeg.exe -rtsp_transport udp -i rtsp://admin:@169.254.241.135:554/live -c copy -f flv rtmp://localhost:1935/cam
 
 # Terminal 3: Backend FastAPI
@@ -176,111 +112,141 @@ cd backend
 .\venv\Scripts\python.exe -m uvicorn main:app --host 0.0.0.0 --port 8000
 ```
 
-## Control de versiones (Git)
-
-Este proyecto está bajo control de versiones con Git. A continuación los comandos básicos para trabajar con el repositorio:
-
-### Comandos esenciales
+**Opción C: Docker Compose (solo infraestructura CCTV + Nginx)**
 
 ```bash
-# Ver estado de los archivos
+docker-compose up -d
+```
+
+> **Nota:** Docker Compose solo levanta MediaMTX y Nginx. El backend FastAPI, FFmpeg y Modbus deben ejecutarse nativamente porque necesitan acceso directo a GPU, webcam y red link-local.
+
+## d. Estructura del proyecto
+
+```
+TFMBigSchool/
+├── backend/
+│   ├── main.py                  # API FastAPI + estado de producción
+│   ├── modbus_client.py         # Cliente Modbus TCP (polling del PLC)
+│   ├── camera.py                # Captura con OpenCV (webcam + thumbnails)
+│   ├── config.py                # Configuración centralizada (IP del PLC)
+│   ├── find_plc.py              # Script para descubrir la IP del PLC
+│   ├── trainer.py               # Modelo PatchCore + calibración + heatmaps
+│   ├── requirements.txt         # Dependencias Python
+│   ├── pytest.ini               # Configuración de pytest
+│   ├── .coveragerc              # Configuración de cobertura
+│   ├── tests/                   # Suite de tests automatizados
+│   │   ├── test_config.py
+│   │   ├── test_camera.py
+│   │   ├── test_find_plc.py
+│   │   ├── test_modbus_client.py
+│   │   ├── test_trainer.py
+│   │   └── test_main.py         # 17 tests de integración FastAPI
+│   ├── images/                  # Imágenes capturadas (no versionado)
+│   ├── training/                # Dataset OK/NG (no versionado)
+│   ├── models/                  # Modelos entrenados (no versionado)
+│   └── heatmaps/                # Mapas de calor generados (no versionado)
+├── frontend/
+│   └── index.html               # Frontend monolítico (HTML+CSS+JS vanilla)
+├── cctv/
+│   ├── mediamtx.yml             # Configuración MediaMTX (WebRTC/RTMP)
+│   └── nginx.conf               # Configuración Nginx proxy
+├── arduino/
+│   └── conveyor_modbus_tcp/
+│       └── conveyor_modbus_tcp.ino   # Código M-Duino 21+ (Arduino)
+├── tools/
+│   └── ffmpeg.exe               # Puente RTSP → RTMP (Windows)
+├── mediamtx.exe                 # Servidor streaming nativo (Windows)
+├── start-all.bat                # Inicio unificado: backend + CCTV
+├── stop-all.bat                 # Detener todos los servicios
+├── docker-compose.yml           # Orquestación Docker (CCTV + Nginx)
+├── .gitignore                   # Archivos ignorados por Git
+├── README.md                    # Documentación principal
+└── AGENTS.md                    # Detalles técnicos para desarrolladores
+```
+
+## e. Funcionalidades principales
+
+| Funcionalidad | Descripción |
+|--------------|-------------|
+| **Detección automática de piezas** | Sensor fotoeléctrico conectado al PLC detecta cada pieza y para la cinta. |
+| **Captura de imagen 4MP** | Webcam USB captura imagen de alta resolución con precalentamiento y estabilización. |
+| **Inferencia IA en GPU** | Modelo PatchCore (Wide ResNet-50 v2) detecta anomalías visuales en ~50-100 ms. |
+| **Calibración automática** | Cálculo de umbrales dinámicos con scores OK/NG, AUROC y percentiles (p95/p99). |
+| **Mapas de calor (heatmaps)** | Generación automática de overlays sobre la imagen original para identificar zonas defectuosas. |
+| **Control de cinta** | Comunicación Modbus TCP para arrancar/parar la cinta desde el backend. |
+| **CCTV en vivo** | Stream WebRTC de cámara IP PoE integrado en el frontend (baja latencia). |
+| **Entrenamiento interactivo** | Captura y etiquetado de imágenes OK/NG desde el frontend; entrenamiento del modelo en 1-2 minutos. |
+| **API REST completa** | Endpoints para status, captura, decisión manual, entrenamiento, predicción y streaming. |
+| **Testing automatizado** | 38 tests unitarios e integración con pytest, cobertura de código y mocks. |
+| **Control de versiones Git** | Repositorio versionado con `.gitignore` profesional y commits descriptivos. |
+
+## f. Usuario y contraseña de prueba
+
+Este proyecto **no implementa un sistema de autenticación ni login de usuarios**. El acceso al frontend y a la API REST es directo sin credenciales.
+
+- **Frontend:** `http://localhost:8000`
+- **API docs (Swagger UI):** `http://localhost:8000/docs`
+
+En caso de requerir autenticación en futuras versiones, se recomienda integrar OAuth2/JWT con FastAPI.
+
+---
+
+## Flujo de producción (diagrama textual)
+
+```
+┌─────────────┐     ┌──────────────┐     ┌─────────────┐
+│   Sensor    │────▶│  M-Duino 21+ │────▶│   Cinta     │
+│  I0.0 (PLC) │     │  (Arduino)   │     │  Q0.0 (RELÉ)│
+└─────────────┘     └──────────────┘     └─────────────┘
+         │                   │
+         │ (coil 0 = 1)      │ (lee coil 1)
+         ▼                   ▼
+┌─────────────────────────────────────────────────────┐
+│              Backend FastAPI (Python)               │
+│  ┌──────────┐  ┌──────────┐  ┌──────────────────┐   │
+│  │  Modbus  │  │  OpenCV  │  │  PatchCore (GPU) │   │
+│  │  Client  │  │  Camera  │  │  Anomalib        │   │
+│  └──────────┘  └──────────┘  └──────────────────┘   │
+└─────────────────────────────────────────────────────┘
+         │
+         │ (JSON + imágenes)
+         ▼
+┌─────────────────────────────────────────────────────┐
+│           Frontend (HTML5 + WebRTC)                  │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  │
+│  │  Preview    │  │   Heatmap   │  │   CCTV      │  │
+│  │  Webcam     │  │   OK / NG   │  │   En vivo   │  │
+│  └─────────────┘  └─────────────┘  └─────────────┘  │
+└─────────────────────────────────────────────────────┘
+```
+
+## Control de versiones (Git)
+
+Este proyecto está bajo control de versiones con Git.
+
+```bash
+# Ver estado
 git status
 
-# Ver historial de commits
+# Ver historial
 git log --oneline
 
-# Añadir archivos modificados al stage
-git add <archivo>
-# O añadir todos los cambios
+# Añadir cambios
 git add -A
 
-# Crear un commit con mensaje descriptivo
+# Commitear
 git commit -m "descripcion del cambio"
 
-# Ver diferencias antes de commitear
+# Ver diferencias
 git diff
 ```
 
-### Qué se versiona y qué no
-
-Se versiona (controlado por Git):
-- Código fuente Python, Arduino y frontend.
-- Configuración (`*.yml`, `*.ini`, `*.py` de config).
-- Tests y scripts de utilidad.
-- Documentación (`README.md`, `AGENTS.md`).
-
-Se ignora (`.gitignore`):
-- Entorno virtual (`venv/`).
-- Imágenes capturadas, datasets de entrenamiento, modelos entrenados y heatmaps generados.
-- Archivos binarios ejecutables (`*.exe`, `*.dll`).
-- Certificados SSL auto-generados, logs y carpetas de streaming (`RTMP/`).
-- Caché de Python (`__pycache__/`, `*.pyc`).
-
-## Funcionamiento (flujo de producción)
-
-1. **M-Duino 21+** lee la entrada `I0.0` (sensor fotoeléctrico).
-   - Solo acepta nueva pieza si `sensorLibre=true` y pasaron **2 segundos** desde la última.
-2. Al detectar flanco ascendente (pieza nueva):
-   - **PARA la cinta inmediatamente** (`Q0.0 = HIGH`).
-   - Marca `sensorLibre = false` (placa ocupando el sensor).
-   - Publica **coil 0 = 1** para que el backend lo sepa.
-3. **Backend** hace polling cada **50 ms** por Modbus TCP.
-4. Al ver coil 0 = 1:
-   - Captura imagen con la webcam.
-   - Ejecuta inferencia IA (PatchCore en GPU).
-5. **Si pieza es OK:**
-   - Backend escribe **coil 1 = 1**.
-   - M-Duino recibe el comando:
-     - **Arranca cinta** (`Q0.0 = LOW`).
-     - Resetea detección.
-     - **Ignora** el sensor hasta que la placa salga (sensor baje a LOW).
-   - Backend espera **1 segundo** (cooldown) antes de volver a `waiting`.
-6. **Si pieza es NG:**
-   - Backend **no escribe nada**. La cinta **sigue parada**.
-   - Operador revisa la pieza y pulsa **CONTINUAR CINTA** en el frontend.
-   - Backend escribe **coil 1 = 1**.
-   - M-Duino arranca cinta (`Q0.0 = LOW`).
-7. Cuando la placa física sale del sensor (I0.0 = LOW):
-   - M-Duino marca `sensorLibre = true`.
-   - Listo para la siguiente pieza (tras el cooldown de 2s).
-
-**Importante:**
-- El sensor **SIEMPRE** para la cinta al detectar una pieza.
-- El PC solo decide si la cinta puede seguir (OK) o debe quedar parada (NG).
-- El Arduino ignora triggers mientras la placa anterior no haya salido del sensor (evita doble detección de la misma placa).
-- Cooldown de **2 segundos** entre piezas.
-
-8. **Frontend** muestra en tiempo real:
-   - Estado de la conexión con el PLC
-   - Estado del sensor
-   - Estado de la cámara IP PoE (WebRTC)
-   - Barra de estado del ciclo (`waiting → capturing → inspecting → ok/ng`)
-   - **Izquierda:** imagen actual (original durante captura/inspección, **heatmap** tras inferencia)
-   - **Derecha:** cámara IP PoE en vivo (WebRTC)
-   - **Debajo:** resultado OK/NG + botón **CONTINUAR CINTA**
-   - Info de la predicción (score, raw score, z-score)
-
-## Entrenamiento de anomalías (PatchCore + GPU)
-
-El proyecto usa **PatchCore** con backbone **Wide ResNet-50 v2**, que se entrena e infiere automáticamente en la **RTX 4070** (CUDA 12.4). Esto es mucho más rápido y preciso que CPU.
-
-- Ve a la pestaña **Entrenamiento** en el frontend.
-- Captura imágenes OK y NG con la cámara en vivo.
-- Pulsa **ENTRENAR MODELO (PatchCore)**.
-- El entrenamiento dura ~1-2 minutos en GPU.
-- La inferencia es casi instantánea (~50-100 ms por imagen).
-
-## API REST
-
-- `GET /` → Frontend
-- `GET /api/status` → Estado del sistema (JSON)
-- `GET /api/captures` → Lista de imágenes (JSON)
-- `GET /api/captures/<filename>` → Descargar imagen
-- `POST /api/trigger` → Captura manual
+**Se versiona:** código fuente, configuración, tests, documentación.  
+**Se ignora:** entornos virtuales, imágenes/modelos generados, binarios, logs, certificados, caché Python.
 
 ## Testing y calidad de código
 
-El backend incluye una suite de tests automáticos con **pytest**, **pytest-cov** y **pytest-mock**.
+El backend incluye una suite completa de tests automatizados.
 
 ### Ejecutar tests
 
@@ -298,18 +264,21 @@ cd backend
 
 ### Tests disponibles
 
-- **test_config.py** – validación de constantes de red.
-- **test_find_plc.py** – escaneo de red y conectividad Modbus (mocks de socket).
-- **test_camera.py** – gestión de la webcam (mocks de `cv2.VideoCapture`).
-- **test_modbus_client.py** – inicialización, encolado de escrituras y ciclo de vida del hilo Modbus.
-- **test_trainer.py** – calibración, guardado de imágenes de entrenamiento, conteo y preparación de dataset.
-- **test_main.py** – **17 tests de integración** sobre todos los endpoints FastAPI.
+| Archivo | Tests | Descripción |
+|---------|-------|-------------|
+| `test_config.py` | 1 | Validación de constantes de red |
+| `test_find_plc.py` | 4 | Escaneo de red y conectividad Modbus |
+| `test_camera.py` | 5 | Gestión de webcam con mocks de OpenCV |
+| `test_modbus_client.py` | 3 | Inicialización, encolado de escrituras, ciclo de vida |
+| `test_trainer.py` | 8 | Calibración, guardado de datasets, preparación de datos |
+| `test_main.py` | 17 | Tests de integración sobre todos los endpoints FastAPI |
+| **Total** | **38** | |
 
 ### Estándares aplicados
 
-- **Type hints** en todas las firmas de funciones y clases públicas (`typing` de Python).
-- **Docstrings** descriptivas en módulos, clases y funciones públicas.
-- Configuración en `backend/pytest.ini` y `backend/.coveragerc`.
+- **Type hints** en todas las firmas de funciones y clases públicas.
+- **Docstrings** descriptivas en módulos, clases y funciones.
+- Configuración en `pytest.ini` y `.coveragerc`.
 
 ## Conocimientos y capacidades aplicadas
 
@@ -318,14 +287,14 @@ cd backend
 - Comunicación entre servicios mediante Modbus TCP y gestión de hilos concurrentes.
 - Integración de hardware industrial (PLC/M-Duino) con software de alto nivel.
 - Visión por computador con OpenCV y captura de imágenes en tiempo real.
-- Inteligencia artificial aplicada a inspección visual: modelo PatchCore (anomalías) con calibración automática de umbrales.
-- Inferencia en GPU con PyTorch y CUDA 12.4, optimizando latencia y rendimiento.
-- Uso de IA generativa y asistentes de código (Copilot) durante todo el ciclo de desarrollo.
-- Testing automatizado con pytest, mocks, cobertura de código y análisis de métricas de calidad.
+- Inteligencia artificial aplicada a inspección visual: modelo PatchCore con calibración automática.
+- Inferencia en GPU con PyTorch y CUDA 12.4.
+- Uso de IA generativa y asistentes de código durante el ciclo de desarrollo.
+- Testing automatizado con pytest, mocks, cobertura de código y métricas de calidad.
 - Type hints y documentación profesional con docstrings descriptivas.
 - Contenerización con Docker Compose para servicios de streaming y proxy.
 - Redes locales, configuración de interfaces link-local y diagnóstico de conectividad.
-- Seguridad en el desarrollo: configuración por entornos, separación de secretos y buenas prácticas de codificación segura.
+- Seguridad en el desarrollo: configuración por entornos, separación de secretos y buenas prácticas.
 - Documentación técnica dirigida a equipos de desarrollo y operaciones.
 
 ## Notas
@@ -334,5 +303,10 @@ cd backend
 - Si no hay webcam disponible, la captura devolverá `None`.
 - En Windows puede ser necesario ajustar el índice de la webcam en `camera.py` (`cv2.VideoCapture(0)`).
 - Si el PLC no responde, verifica que el cable Ethernet esté bien conectado y que ambos dispositivos estén en la misma subred.
-- **Cámara IP PoE:** La cámara debe estar en `169.254.241.135` con puerto RTSP `554` abierto. Si cambia de IP, actualiza `cctv/mediamtx.yml` y el comando FFmpeg en `start-all.bat`.
-- La cámara IP transmite en **H265/HEVC**. El navegador debe soportar H265 en WebRTC (Chrome/Edge en Windows con hardware compatible generalmente funciona).
+- La cámara IP PoE debe estar en `169.254.241.135` con puerto RTSP `554` abierto.
+- La cámara IP transmite en **H265/HEVC**. El navegador debe soportar H265 en WebRTC.
+
+---
+
+> **TFM - Máster en Desarrollo de Software con IA**  
+> Desarrollado con la asistencia de **Kimi K2.6** (OpenCode) para refactorización, testing, documentación y potenciación del flujo de desarrollo.
