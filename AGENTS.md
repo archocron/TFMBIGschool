@@ -84,6 +84,11 @@ cd backend
 .\venv\Scripts\python.exe -m uvicorn main:app --host 0.0.0.0 --port 8000
 ```
 
+## Control de versiones
+- Repositorio Git inicializado en la raíz del proyecto (`C:\proyectos\TFMBigSchool`).
+- Archivos ignorados: `venv/`, imágenes y modelos generados, binarios, certificados y caché Python (ver `.gitignore`).
+- Commits descriptivos obligatorios. Antes de commitear revisar `git status` y `git diff`.
+
 ## Calidad de código y testing (nuevo)
 
 ### Tests

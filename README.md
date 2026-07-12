@@ -176,6 +176,46 @@ cd backend
 .\venv\Scripts\python.exe -m uvicorn main:app --host 0.0.0.0 --port 8000
 ```
 
+## Control de versiones (Git)
+
+Este proyecto está bajo control de versiones con Git. A continuación los comandos básicos para trabajar con el repositorio:
+
+### Comandos esenciales
+
+```bash
+# Ver estado de los archivos
+git status
+
+# Ver historial de commits
+git log --oneline
+
+# Añadir archivos modificados al stage
+git add <archivo>
+# O añadir todos los cambios
+git add -A
+
+# Crear un commit con mensaje descriptivo
+git commit -m "descripcion del cambio"
+
+# Ver diferencias antes de commitear
+git diff
+```
+
+### Qué se versiona y qué no
+
+Se versiona (controlado por Git):
+- Código fuente Python, Arduino y frontend.
+- Configuración (`*.yml`, `*.ini`, `*.py` de config).
+- Tests y scripts de utilidad.
+- Documentación (`README.md`, `AGENTS.md`).
+
+Se ignora (`.gitignore`):
+- Entorno virtual (`venv/`).
+- Imágenes capturadas, datasets de entrenamiento, modelos entrenados y heatmaps generados.
+- Archivos binarios ejecutables (`*.exe`, `*.dll`).
+- Certificados SSL auto-generados, logs y carpetas de streaming (`RTMP/`).
+- Caché de Python (`__pycache__/`, `*.pyc`).
+
 ## Funcionamiento (flujo de producción)
 
 1. **M-Duino 21+** lee la entrada `I0.0` (sensor fotoeléctrico).
