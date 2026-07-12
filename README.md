@@ -6,7 +6,7 @@
 
 El flujo de trabajo es el siguiente: un sensor fotoeléctrico detecta la llegada de una pieza a la cinta transportadora y ordena la parada inmediata. El PC captura una imagen de alta resolución, la procesa mediante un modelo de IA entrenado para detectar defectos, y decide si la pieza es válida (OK) o defectuosa (NG). Si es OK, la cinta se reanuda automáticamente; si es NG, la cinta permanece parada hasta que un operador revise la pieza y pulse continuar. Todo el proceso se visualiza desde un frontend web accesible en la red local.
 
-Este proyecto ha sido desarrollado como Trabajo de Fin de Máster (TFM) aplicando conocimientos de desarrollo de software, arquitectura de sistemas, inteligencia artificial, calidad de código e integración hardware-software.
+Este proyecto ha sido desarrollado como **Trabajo de Fin de Máster (TFM)** del **Máster en Desarrollo con IA** impartido por **BIGschool**, aplicando conocimientos de desarrollo de software, arquitectura de sistemas, inteligencia artificial, calidad de código e integración hardware-software.
 
 > **Asistente de IA utilizado:** El desarrollo, refactorización, testing y documentación de este proyecto han sido potenciados con el asistente de código **Kimi K2.6** (OpenCode), integrado en el flujo de trabajo mediante VS Code y el modelo de IA local.
 
@@ -308,5 +308,5 @@ cd backend
 
 ---
 
-> **TFM - Máster en Desarrollo de Software con IA**  
+> **TFM - Máster en Desarrollo con IA | BIGschool**  
 > Desarrollado con la asistencia de **Kimi K2.6** (OpenCode) para refactorización, testing, documentación y potenciación del flujo de desarrollo.
