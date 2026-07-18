@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TFM - Conveyor Camera Monitor | Alejandro Rioja Chocrón</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/theme/black.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
+
+        :root {
+            --r-background-color: #0b0f19;
+            --r-main-font: 'Inter', sans-serif;
+            --r-heading-font: 'Inter', sans-serif;
+            --r-main-font-size: 32px;
+            --r-heading-color: #ffffff;
+            --r-link-color: #00d4ff;
+            --r-link-color-hover: #66e5ff;
+            --accent-cyan: #00d4ff;
+            --accent-purple: #a855f7;
+            --accent-orange: #fb923c;
+            --accent-green: #34d399;
+            --accent-red: #f87171;
+        }
+
+        .reveal {
+            font-family: var(--r-main-font);
+        }
+
+        .reveal h1, .reveal h2, .reveal h3, .reveal h4 {
+            font-family: var(--r-heading-font);
+            text-transform: none;
+            letter-spacing: -0.02em;
+            font-weight: 800;
+        }
+
+        .reveal h1 { font-size: 2.4em; }
+        .reveal h2 { font-size: 1.6em; }
+        .reveal h3 { font-size: 1.2em; }
+
+        .reveal .slides section {
+            line-height: 1.5;
+        }
+
+        /* Gradient backgrounds per section */
+        .bg-gradient-1 { background: linear-gradient(135deg, #0b0f19 0%, #111827 100%); }
+        .bg-gradient-2 { background: linear-gradient(135deg, #0b0f19 0%, #1e1b4b 100%); }
+        .bg-gradient-3 { background: linear-gradient(135deg, #0b0f19 0%, #312e81 100%); }
+        .bg-gradient-4 { background: linear-gradient(135deg, #0b0f19 0%, #1e293b 100%); }
+        .bg-gradient-wow { background: linear-gradient(135deg, #0f172a 0%, #312e81 50%, #0f172a 100%); }
+
+        .reveal .slides section .fragment {
+            transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .reveal .slides section .fragment.fade-up {
+            transform: translateY(20px);
+        }
+        .reveal .slides section .fragment.fade-up.visible {
+            transform: translateY(0);
+        }
+
+        /* Accent text */
+        .text-cyan { color: var(--accent-cyan); }
+        .text-purple { color: var(--accent-purple); }
+        .text-orange { color: var(--accent-orange); }
+        .text-green { color: var(--accent-green); }
+        .text-red { color: var(--accent-red); }
+
+        /* Tables compact */
+        .reveal table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.7em;
+            margin-top: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        }
+        .reveal table th {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            color: var(--accent-cyan);
+            padding: 10px 12px;
+            text-align: left;
+            font-weight: 700;
+            border-bottom: 2px solid var(--accent-cyan);
+        }
+        .reveal table td {
+            padding: 8px 12px;
+            border-bottom: 1px solid #334155;
+            color: #e2e8f0;
+        }
+        .reveal table tr:nth-child(even) td {
+            background: rgba(255,255,255,0.03);
+        }
+        .reveal table tr:hover td {
+            background: rgba(0, 212, 255, 0.08);
+        }
+
+        /* Cards */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 14px;
+            margin-top: 18px;
+        }
+        .card-grid-3 {
+            grid-template-columns: repeat(3, 1fr);
+        }
+        .card-grid-2 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        .card-grid-4 {
+            grid-template-columns: repeat(4, 1fr);
+        }
+        .card {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 14px;
+            padding: 14px 16px;
+            text-align: left;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(0,212,255,0.10);
+            border-color: rgba(0,212,255,0.25);
+        }
+        .card-title {
+            font-weight: 700;
+            font-size: 0.85em;
+            margin-bottom: 6px;
+            color: #fff;
+        }
+        .card-desc {
+            font-size: 0.65em;
+            color: #94a3b8;
+            line-height: 1.35;
+        }
+        .card-icon {
+            font-size: 1.2em;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        /* Big stats */
+        .big-stat {
+            font-size: 2.6em;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Code block style */
+        .reveal pre {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 10px;
+            padding: 12px 14px;
+            font-size: 0.55em;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+        }
+        .reveal code {
+            font-family: 'Fira Code', monospace;
+            color: #e2e8f0;
+        }
+
+        /* Flow diagram boxes */
+        .flow-box {
+            display: inline-block;
+            padding: 10px 18px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.12);
+            font-size: 0.7em;
+            font-weight: 600;
+            margin: 4px;
+        }
+        .flow-arrow {
+            font-size: 1.1em;
+            color: var(--accent-cyan);
+            margin: 0 8px;
+            vertical-align: middle;
+        }
+
+        /* Badge */
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 999px;
+            font-size: 0.55em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .badge-cyan { background: rgba(0,212,255,0.15); color: var(--accent-cyan); border: 1px solid rgba(0,212,255,0.3); }
+        .badge-purple { background: rgba(168,85,247,0.15); color: var(--accent-purple); border: 1px solid rgba(168,85,247,0.3); }
+        .badge-green { background: rgba(52,211,153,0.15); color: var(--accent-green); border: 1px solid rgba(52,211,153,0.3); }
+        .badge-orange { background: rgba(251,146,60,0.15); color: var(--accent-orange); border: 1px solid rgba(251,146,60,0.3); }
+
+        /* Footer note */
+        .footer-note {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.42em;
+            color: #64748b;
+            letter-spacing: 0.08em;
+        }
+
+        /* Checklist */
+        .checklist {
+            list-style: none;
+            padding: 0;
+            text-align: left;
+            display: inline-block;
+        }
+        .checklist li {
+            padding: 8px 0;
+            padding-left: 32px;
+            position: relative;
+            font-size: 0.8em;
+        }
+        .checklist li::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 10px;
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+            border: 2px solid var(--accent-green);
+        }
+        .checklist li.checked::before {
+            background: var(--accent-green);
+            border-color: var(--accent-green);
+        }
+        .checklist li.checked::after {
+            content: "";
+            position: absolute;
+            left: 5px;
+            top: 12px;
+            width: 5px;
+            height: 8px;
+            border: solid #0b0f19;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+
+        /* Diagram vertical flow */
+        .v-flow {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+        .v-flow .flow-box { width: 420px; text-align: center; font-size: 0.72em; padding: 8px 14px; }
+        .v-flow .flow-arrow { margin: 0; font-size: 1em; }
+
+        /* Two column */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            align-items: start;
+        }
+
+        /* Highlight bar */
+        .hl-bar {
+            border-left: 3px solid var(--accent-cyan);
+            padding-left: 16px;
+            margin: 12px 0;
+            text-align: left;
+            background: rgba(0,212,255,0.04);
+            padding: 12px 16px;
+            border-radius: 0 10px 10px 0;
+        }
+
+        /* Custom background for specific slides */
+        .reveal .slides section[data-background] {
+            background-size: cover;
+        }
+
+        /* Utility: reduce heading margin */
+        .tight h2 { margin-bottom: 0.3em; }
+        .tight p { margin: 0.3em 0; }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <!-- SLIDE 1: Portada -->
+            <section data-background="linear-gradient(135deg, #020617 0%, #0f172a 40%, #1e1b4b 100%)">
+                <h1 style="font-size: 2.4em; margin-bottom: 0.2em;">
+                    <span class="text-cyan">Conveyor</span> <span class="text-purple">Camera</span> <span style="color:#fff">Monitor</span>
+                </h1>
+                <h3 style="font-weight:300; color:#94a3b8; margin-bottom: 1.0em; font-size:1.0em;">Inspección visual automática con IA para líneas de producción industriales</h3>
+                <div style="margin-top: 30px;">
+                    <p style="font-size:0.72em; color:#cbd5e1;">
+                        <strong style="color:#fff;">Alejandro Rioja Chocrón</strong><br>
+                        Trabajo de Fin de Máster (TFM)<br>
+                        <span class="text-cyan">Máster en Desarrollo con IA</span> - 2ª Edición<br>
+                        <span style="color:#fb923c">BIGschool</span> | Entrega: 20/07/2026
+                    </p>
+                </div>
+            </section>
+
+            <!-- SLIDE 2: Indice -->
+            <section data-background="linear-gradient(135deg, #0b0f19, #1e293b)">
+                <h2>Índice</h2>
+                <div class="two-col" style="text-align:left; font-size:0.72em; color:#e2e8f0; margin-top:16px;">
+                    <div class="fragment fade-up">
+                        <ol>
+                            <li>El Problema y la Solución</li>
+                            <li>Descripción General del Proyecto</li>
+                            <li>Hardware Industrial</li>
+                            <li>Stack Tecnológico (Backend & IA)</li>
+                            <li>Stack Tecnológico (Infra & Calidad)</li>
+                            <li>IA en el Desarrollo del Proyecto</li>
+                            <li>Arquitectura del Sistema</li>
+                        </ol>
+                    </div>
+                    <div class="fragment fade-up">
+                        <ol start="8">
+                            <li>Flujo de Producción</li>
+                            <li>Inteligencia Artificial (Anomalib)</li>
+                            <li>Backend & API REST</li>
+                            <li>Calidad de Código y Testing</li>
+                            <li>Infraestructura & Docker</li>
+                            <li>Buenas Prácticas y Seguridad</li>
+                            <li>Conclusiones y Entrega</li>
+                        </ol>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 3: El Problema -->
+            <section data-background="linear-gradient(135deg, #0b0f19, #1e1b4b)">
+                <h2><span class="text-red">El Problema</span> en Industria 4.0</h2>
+                <div class="card-grid card-grid-3">
+                    <div class="card fragment fade-up">
+                        <span class="card-icon text-red">TIEMPO</span>
+                        <div class="card-title">Inspección Manual Lenta</div>
+                        <div class="card-desc">Operadores humanos revisan pieza a pieza, generando cuellos de botella en la línea de producción.</div>
+                    </div>
+                    <div class="card fragment fade-up">
+                        <span class="card-icon text-orange">ERROR</span>
+                        <div class="card-title">Tasa de Error Variable</div>
+                        <div class="card-desc">La fatiga y la subjetividad visual provocan falsos negativos que escapan al control de calidad.</div>
+                    </div>
+                    <div class="card fragment fade-up">
+                        <span class="card-icon text-purple">COSTE</span>
+                        <div class="card-title">Coste Operativo Alto</div>
+                        <div class="card-desc">Cada operador dedicado a QA representa un coste fijo y una dependencia de personal especializado.</div>
+                    </div>
+                </div>
+                <div class="hl-bar fragment" style="margin-top: 24px;">
+                    <strong class="text-cyan">Objetivo:</strong> Construir un sistema de inspección visual <strong>automático, autónomo y desplegable</strong> que demuestre competencias en desarrollo de software, IA, hardware industrial y calidad de código.
+                </div>
+            </section>
+
+            <!-- SLIDE 4: Descripcion General -->
+            <section data-background="linear-gradient(135deg, #0b0f19, #312e81)">
+                <h2>Descripción General del Proyecto</h2>
+                <p class="fragment fade-up" style="font-size:0.78em; color:#cbd5e1; max-width: 900px; margin: 10px auto;">
+                    <strong>Conveyor Camera Monitor</strong> es un sistema de inspección visual automática para líneas de producción industriales. Integra un PLC industrial, visión por computador, un <strong>modelo de IA entrenado por mí mismo</strong> con detección de anomalías (PatchCore) y una interfaz web de control en tiempo real. Además, todo el desarrollo ha sido <strong>potenciado con IA generativa</strong> (Kimi K2.6) como asistente de código.
+                </p>
+                <div class="v-flow fragment" style="margin-top: 14px;">
+                    <div class="flow-box">Sensor fotoelectrico detecta pieza</div>
+                    <div class="flow-arrow">&#8595;</div>
+                    <div class="flow-box">PLC para la cinta instantáneamente</div>
+                    <div class="flow-arrow">&#8595;</div>
+                    <div class="flow-box">PC captura imagen y ejecuta IA</div>
+                    <div class="flow-arrow">&#8595;</div>
+                    <div class="flow-box">Decisión: OK (reanuda) o NG (parada hasta revisión)</div>
+                </div>
+                <p style="font-size:0.6em; color:#64748b; margin-top: 10px;">Flujo de trabajo completamente automático con supervisión humana en NG</p>
+            </section>
+
+            <!-- SLIDE 5: Hardware I -->
+            <section data-background="linear-gradient(135deg, #0b0f19, #1e293b)">
+                <h2>Hardware Industrial <span class="badge badge-orange">PARTE I</span></h2>
+                <div class="card-grid card-grid-3">
+                    <div class="card fragment fade-up">
+                        <div class="card-title text-cyan">M-Duino 21+</div>
+                        <div class="card-desc">PLC de Industrial Shields basado en <strong>Arduino Mega 2560</strong> con Ethernet W5500 integrado. Actúa como servidor Modbus TCP y controlador de entradas/salidas industriales.</div>
+                    </div>
+                    <div class="card fragment fade-up">
+                        <div class="card-title text-green">Sensor I0.0</div>
+                        <div class="card-desc">Interruptor fotoeléctrico cuadrado, sensor infrarrojo de supresión de fondo, inducción de límite, <strong>GTB6-DC30</strong>. Conectado a entrada digital I0_0 con respuesta en milisegundos.</div>
+                    </div>
+                    <div class="card fragment fade-up">
+                        <div class="card-title text-red">Relé Q0.0</div>
+                        <div class="card-desc">Relé intermedio delgado tipo interfaz <strong>ENMG HF41F-24-ZS</strong>, CC 5 V/12 V/24 V, kit de montaje en carril DIN con luces de barra de puente de módulo CC. <strong>HIGH = PARADA</strong>.</div>
+                    </div>
+                    <div class="card fragment fade-up">
+                        <div class="card-title text-orange">Fuente 24V</div>
+                        <div class="card-desc"><strong>MZMW</strong> fuente de alimentación conmutada en carril DIN (MDR-10W / 20W / 40W / 60W / 100W). Mini interruptor industrial SMPS potencia 10A AC-DC salida única. Alimenta PLC, sensor y módulo de relé.</div>
+                    </div>
+                    <div class="card fragment fade-up">
+                        <div class="card-title text-purple">Cinta Transportadora</div>
+                        <div class="card-desc">Cinta transportadora real de banda de PVC con motorreductor de 24 V. Transporta las placas de prueba bajo la cámara de inspección y se detiene bajo demanda del sistema de visión.</div>
+                    </div>
+                    <div class="card fragment fade-up">
+                        <div class="card-title" style="color:#fb923c">Placas de Ratón</div>
+                        <div class="card-desc">Placas de ratón reales utilizadas como piezas de prueba para calibrar el sistema. Incluye placas OK (sin defectos) y placas NG (con defectos simulados como arañazos o manchas).</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 6: Hardware II -->
+            <section data-background="linear-gradient(135deg, #0b0f19, #1e293b)">
+                <h2>Hardware de Visión <span class="badge badge-cyan">PARTE II</span></h2>
+                <div class="card-grid card-grid-2">
+                    <div class="card fragment fade-up">
+                        <div class="card-title text-cyan">Webcam Industrial 4K</div>
+                        <div class="card-desc">Cámara web industrial 4K 8MP IMX415 USB 2K 4MP sensor con lente varifocal de 5-50 mm, USB 2.0, UVC OTG. Captura de alta resolución usada por OpenCV con precalentamiento y estabilización.</div>
+                    </div>
+                    <div class="card fragment fade-up">
+                        <div class="card-title text-purple">Cámara IP PoE HD</div>
+                        <div class="card-desc">Cámara PoE de transmisión en vivo digital 4K con audio HD industrial, IP de seguridad HD de 3/4/5/8MP, lente varifocal manual de 2,8-12 mm / 5-100 mm. Transmite en <strong>H265/HEVC</strong> vía RTSP.</div>
+                    </div>
+                    <div class="card fragment fade-up">
+                        <div class="card-title text-green">Switch PoE</div>
+                        <div class="card-desc"><strong>Cudy GS105P</strong> - Interruptor PoE Gigabit de 5 puertos (4 PoE+ 36 W). Montaje en escritorio/pared, plug and play, puertos de metal resistente/blindados con optimización del tráfico.</div>
+                    </div>
+                    <div class="card fragment fade-up">
+                        <div class="card-title text-orange">USB - Ethernet 2.5G</div>
+                        <div class="card-desc"><strong>Loydia</strong> adaptador USB-C a Ethernet 2.5G / USB 3.0. Adaptador Tipo-C a LAN RJ45 2500 Mbps, usbc a RJ45 Gigabit LAN Network Adapter. Proporciona interfaz de red dedicada al PC para el PLC.</div>
+                    </div>
+                </div>
+                <div class="hl-bar fragment" style="margin-top: 18px;">
+                    <strong class="text-cyan">Conectividad:</strong> Red link-local dedicada PC-PLC (<code>169.254.241.143</code> &#8594; <code>169.254.241.100</code>) para evitar interferencias y garantizar latencia mínima en Modbus TCP.
+                </div>
+            </section>
+
+            <!-- SLIDE 7a: Stack Tecnologico Backend & IA -->
+            <section data-background="linear-gradient(135deg, #0b0f19, #312e81)">
+                <h2>Stack Tecnológico <span class="badge badge-cyan">Backend & IA</span></h2>
+                <div class="card-grid card-grid-3" style="margin-top:14px;">
+                    <div class="card fragment fade-up">
+                        <div class="card-title text-cyan">Python 3.12 + FastAPI</div>
+                        <div class="card-desc">Backend ASGI de alto rendimiento con API REST y documentación Swagger automática.</div>
+                    </div>
+                    <div class="card fragment fade-up">
+                        <div class="card-title text-cyan">OpenCV (cv2)</div>
+                        <div class="card-desc">Captura, preprocesado y generación de thumbnails desde la webcam USB en tiempo real.</div>
+                    </div>
+                    <div class="card fragment fade-up">
+                        <div class="card-title text-cyan">PyTorch + CUDA 12.4</div>
+                        <div class="card-desc">Inferencia del modelo de IA acelerada en GPU NVIDIA RTX 4070 con latencias de 50-100 ms.</div>
+                    </div>
+                    <div class="card fragment fade-up">
+                        <div class="card-title text-purple">Anomalib (PatchCore)</div>
+                        <div class="card-desc">Framework Intel de detección de anomalías visuales. Entrenamiento solo con piezas OK.</div>
+                    </div>
+                    <div class="card fragment fade-up">
+                        <div class="card-title text-purple">Pymodbus</div>
+                        <div class="card-desc">Cliente Modbus TCP para lectura/escritura de coils en el PLC industrial cada 50 ms.</div>
+                    </div>
+                    <div class="card fragment fade-up">
+                        <div class="card-title text-purple">scikit-learn + NumPy</div>
+                        <div class="card-desc">Métricas estadísticas, cálculo de AUROC y calibración automática de umbrales de decisión.</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 7b: Stack Tecnologico Infra & Calidad -->
+            <section data-background="linear-gradient(135deg, #0b0f19, #312e81)">
+                <h2>Stack Tecnológico <span class="badge badge-orange">Infra & Calidad</span></h2>
+                <div class="card-grid card-grid-3" style="margin-top:14px;">
+                    <div class="card fragment fade-up">
+                        <div class="card-title text-green">HTML5 + CSS3 + JS</div>
+                        <div class="card-desc">Frontend monolítico ligero sin frameworks pesados, consumiendo la API REST vía fetch.</div>
+                    </div>
+                    <div class="card fragment fade-up">
+                        <div class="card-title text-green">WebRTC / MediaMTX</div>
+                        <div class="card-desc">Streaming de baja latencia de la cámara IP PoE en el navegador mediante WebRTC.</div>
+                    </div>
+                    <div class="card fragment fade-up">
+                        <div class="card-title text-orange">MediaMTX + FFmpeg</div>
+                        <div class="card-desc">Servidor RTMP/WebRTC y puente RTSP&#8594;RTMP para integrar la cámara IP en el frontend.</div>
+                    </div>
+                    <div class="card fragment fade-up">
+                        <div class="card-title text-orange">Docker Compose</div>
+                        <div class="card-desc">Orquestación de contenedores para infraestructura CCTV (MediaMTX + Nginx proxy).</div>
+                    </div>
+                    <div class="card fragment fade-up">
+                        <div class="card-title text-red">pytest + pytest-cov</div>
+                        <div class="card-desc">38 tests automatizados con cobertura de código, mocks de hardware y cámara.</div>
+                    </div>
+                    <div class="card fragment fade-up">
+                        <div class="card-title text-red">typing + docstrings + Git</div>
+                        <div class="card-desc">Type hints, documentación profesional y control de versiones con commits descriptivos.</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 7c: IA en el Desarrollo del Proyecto -->
+            <section data-background="linear-gradient(135deg, #0b0f19, #1e1b4b)">
+                <h2>IA en el Desarrollo del Proyecto <span class="badge badge-purple">Kimi K2.6</span></h2>
+                <p class="fragment fade-up" style="font-size:0.78em; color:#cbd5e1; max-width: 900px; margin: 10px auto;">
+                    Todo el ciclo de vida del proyecto ha sido <strong>potenciado con inteligencia artificial generativa</strong>. Desde el diseño de la arquitectura hasta la generación de esta presentación, el asistente <span class="text-cyan">Kimi K2.6 (OpenCode)</span> integrado en VS Code ha actuado como copiloto de desarrollo.
+                </p>
+                <div class="card-grid card-grid-3" style="margin-top:12px;">
+                    <div class="card fragment fade-up">
+                        <div class="card-title text-cyan">Diseño & Arquitectura</div>
+                        <div class="card-desc">Definición de la máquina de estados de producción, elección de PatchCore y calibración de umbrales. Diseño del protocolo Modbus y flujo hardware-software.</div>
+                    </div>
+                    <div class="card fragment fade-up">
+                        <div class="card-title text-purple">Codificación</div>
+                        <div class="card-desc">Generación, refactorización y optimización de módulos Python (FastAPI, OpenCV, trainer). Implementación del cliente Modbus TCP y gestión de hilos concurrentes.</div>
+                    </div>
+                    <div class="card fragment fade-up">
+                        <div class="card-title text-green">Testing & Calidad</div>
+                        <div class="card-desc">Creación de 38 tests automatizados con pytest, mocks de hardware/cámara y configuración de cobertura. Type hints y docstrings en todo el backend.</div>
+                    </div>
+                    <div class="card fragment fade-up">
+                        <div class="card-title text-orange">Documentación</div>
+                        <div class="card-desc">Redacción del README.md completo, AGENTS.md técnico para desarrolladores, y esta presentación en Reveal.js con diseño profesional.</div>
+                    </div>
+                    <div class="card fragment fade-up">
+                        <div class="card-title text-red">Depuración</div>
+                        <div class="card-desc">Análisis de logs, resolución de errores de threading, ajuste de cooldowns, validación de conectividad link-local y pruebas de integración.</div>
+                    </div>
+                    <div class="card fragment fade-up">
+                        <div class="card-title" style="color:#fb923c">Entrega</div>
+                        <div class="card-desc">Generación de contenido para vídeo explicativo, estructura de la entrega TFM y verificación del checklist de requisitos del máster.</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 8: Arquitectura -->
+            <section data-background="linear-gradient(135deg, #0b0f19, #1e1b4b)">
+                <h2>Arquitectura del Sistema</h2>
+                <div style="display:flex; justify-content:center; align-items:center; gap:16px; margin-top:14px; flex-wrap:wrap;" class="fragment fade-up">
+                    <div style="text-align:center;">
+                        <div class="flow-box" style="border-color:var(--accent-red);">
+                            <div style="font-size:0.75em; color:var(--accent-red); font-weight:700;">HARDWARE</div>
+                            <div style="font-size:0.6em; color:#94a3b8; margin-top:3px;">Sensor I0.0<br>Relé Q0.0<br>Cinta<br>M-Duino 21+<br><span style="color:#fb923c;">Sketch Arduino (.ino)</span></div>
+                        </div>
+                    </div>
+                    <div style="text-align:center;">
+                        <div class="flow-arrow">&#8594;</div>
+                        <div style="font-size:0.45em; color:#64748b; margin-top:3px;">Modbus TCP<br>Coil 0 / 1<br>50 ms</div>
+                    </div>
+                    <div style="text-align:center;">
+                        <div class="flow-box" style="border-color:var(--accent-cyan); min-width:180px;">
+                            <div style="font-size:0.75em; color:var(--accent-cyan); font-weight:700;">BACKEND</div>
+                            <div style="font-size:0.6em; color:#94a3b8; margin-top:3px;">FastAPI<br>OpenCV<br>PatchCore GPU<br>Estado Producción</div>
+                        </div>
+                    </div>
+                    <div style="text-align:center;">
+                        <div class="flow-arrow">&#8594;</div>
+                        <div style="font-size:0.45em; color:#64748b; margin-top:3px;">HTTP/JSON<br>Imágenes</div>
+                    </div>
+                    <div style="text-align:center;">
+                        <div class="flow-box" style="border-color:var(--accent-purple); min-width:150px;">
+                            <div style="font-size:0.75em; color:var(--accent-purple); font-weight:700;">FRONTEND</div>
+                            <div style="font-size:0.6em; color:#94a3b8; margin-top:3px;">HTML+CSS+JS<br>Preview Webcam<br>Heatmap OK/NG<br>CCTV WebRTC</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="fragment" style="margin-top: 18px;">
+                    <h3 style="font-size:0.85em; color:var(--accent-orange);">Máquina de Estados de Producción</h3>
+                    <div style="font-size:0.62em; color:#cbd5e1; font-family:monospace; background:#0f172a; padding:10px 16px; border-radius:8px; display:inline-block; text-align:left; line-height:1.6;">
+                        waiting &#8594; capturing &#8594; inspecting<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#9500;&#9472; ok &#8594; cooldown &#8594; waiting<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#9492;&#9472; ng &#8594; waiting (manual)
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 9: Flujo de Produccion -->
+            <section data-background="linear-gradient(135deg, #0b0f19, #312e81)">
+                <h2>Flujo de Producción <span class="badge badge-green">Paso a Paso</span></h2>
+                <div style="text-align:left; max-width: 840px; margin: 0 auto; font-size:0.68em; color:#e2e8f0;">
+                    <div class="fragment fade-up" style="padding:6px 0; border-bottom:1px solid #334155;">
+                        <strong class="text-cyan">1.</strong> El sensor I0.0 detecta flanco ascendente. El Arduino verifica cooldown y estado libre.
+                    </div>
+                    <div class="fragment fade-up" style="padding:6px 0; border-bottom:1px solid #334155;">
+                        <strong class="text-red">2.</strong> El PLC <strong>PARA</strong> la cinta inmediatamente (Q0.0 = HIGH).
+                    </div>
+                    <div class="fragment fade-up" style="padding:6px 0; border-bottom:1px solid #334155;">
+                        <strong class="text-cyan">3.</strong> Arduino publica <strong>coil 0 = 1</strong> (pieza detectada) vía Modbus TCP.
+                    </div>
+                    <div class="fragment fade-up" style="padding:6px 0; border-bottom:1px solid #334155;">
+                        <strong class="text-cyan">4.</strong> Backend detecta coil 0 = 1, captura imagen 4MP y ejecuta <strong>inferencia con modelo PatchCore entrenado por mí</strong> en GPU RTX 4070.
+                    </div>
+                    <div class="fragment fade-up" style="padding:6px 0; border-bottom:1px solid #334155;">
+                        <strong class="text-green">5. OK (IA):</strong> El modelo decide OK. Backend escribe <strong>coil 1 = 1</strong>. Arduino arranca cinta automáticamente.
+                    </div>
+                    <div class="fragment fade-up" style="padding:6px 0; border-bottom:1px solid #334155;">
+                        <strong class="text-red">6. NG (IA):</strong> El modelo decide NG. Backend <strong>no escribe nada</strong>. La cinta permanece PARADA para revisión humana.
+                    </div>
+                    <div class="fragment fade-up" style="padding:6px 0; border-bottom:1px solid #334155;">
+                        <strong class="text-orange">7.</strong> Operador revisa pieza y pulsa <strong>"Continuar"</strong> en el frontend.
+                    </div>
+                    <div class="fragment fade-up" style="padding:6px 0; border-bottom:1px solid #334155;">
+                        <strong class="text-cyan">8.</strong> Backend escribe coil 1 = 1. Arduino arranca cinta y espera a que la placa salga (I0.0 = LOW).
+                    </div>
+                    <div class="fragment fade-up" style="padding:6px 0;">
+                        <strong class="text-purple">9.</strong> Cooldown de <strong>2 segundos</strong> antes de aceptar la siguiente pieza. Evita doble detección.
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 10: IA - Anomalib -->
+            <section data-background="linear-gradient(135deg, #0b0f19, #1e1b4b)">
+                <h2>Inteligencia Artificial</h2>
+                <h3 style="font-size:0.82em; color:#94a3b8; font-weight:400; margin-bottom:6px;">Detección de Anomalías con <span class="text-cyan">Anomalib</span> (Intel) + <span class="text-orange">IA Generativa</span></h3>
+                <div class="card-grid card-grid-3 fragment fade-up" style="margin-top: 6px; font-size:0.62em;">
+                    <div class="card" style="padding:10px 12px;">
+                        <div class="card-title text-purple">¿Qué es Anomalib?</div>
+                        <div class="card-desc">Framework Intel para detección de anomalías visuales. Entrena modelos <strong>unsupervised / one-class</strong> sin ejemplos de piezas defectuosas.</div>
+                    </div>
+                    <div class="card" style="padding:10px 12px;">
+                        <div class="card-title text-orange">Modelo: PatchCore</div>
+                        <div class="card-desc">Basado en <strong>Wide ResNet-50 v2</strong>. Extrae feature maps locales, construye <em>memory bank</em> de patches y detecta desviaciones con precisión milimétrica.</div>
+                    </div>
+                    <div class="card" style="padding:10px 12px;">
+                        <div class="card-title text-green">Entrenamiento Real</div>
+                        <div class="card-desc">Modelo <strong>entrenado por mí</strong> con dataset propio OK/NG. Calibración: media OK 28.1, NG 60.7, umbral 40.92, AUROC sklearn.</div>
+                    </div>
+                    <div class="card" style="padding:10px 12px;">
+                        <div class="card-title text-cyan">Inferencia GPU</div>
+                        <div class="card-desc">Inferencia en <strong>RTX 4070 + CUDA 12.4</strong> vía PyTorch. 50-100 ms por imagen, decisiones en tiempo real sobre la cinta.</div>
+                    </div>
+                    <div class="card" style="padding:10px 12px;">
+                        <div class="card-title text-purple">Heatmaps Automáticos</div>
+                        <div class="card-desc">Mapas de calor automáticos sobre la imagen original para visualizar zonas anómalas al operador.</div>
+                    </div>
+                    <div class="card" style="padding:10px 12px;">
+                        <div class="card-title" style="color:#fb923c">IA Generativa en Desarrollo</div>
+                        <div class="card-desc">Desarrollo potenciado con <strong>Kimi K2.6 (OpenCode)</strong> en VS Code: código, tests, docs y esta presentación.</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 11: Backend & API -->
+            <section data-background="linear-gradient(135deg, #0b0f19, #1e293b)">
+                <h2>Backend & API REST</h2>
+                <div style="display: flex; justify-content: center; gap: 20px; margin-top: 14px; flex-wrap: wrap;" class="fragment fade-up">
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 16px; width: 240px; text-align: left;">
+                        <div style="font-weight:700; font-size:0.75em; color:var(--accent-cyan); margin-bottom:8px;">Producción</div>
+                        <div style="font-size:0.55em; color:#94a3b8; line-height:1.6;">
+                            GET /api/status<br>
+                            POST /api/trigger<br>
+                            POST /api/ok<br>
+                            POST /api/ng<br>
+                            POST /api/release<br>
+                            POST /api/auto-predict/toggle
+                        </div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 16px; width: 240px; text-align: left;">
+                        <div style="font-weight:700; font-size:0.75em; color:var(--accent-purple); margin-bottom:8px;">Entrenamiento</div>
+                        <div style="font-size:0.55em; color:#94a3b8; line-height:1.6;">
+                            GET /api/train/status<br>
+                            POST /api/train/save-ok<br>
+                            POST /api/train/save-ng<br>
+                            POST /api/train/start
+                        </div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 16px; width: 240px; text-align: left;">
+                        <div style="font-weight:700; font-size:0.75em; color:var(--accent-green); margin-bottom:8px;">Streaming / Capturas</div>
+                        <div style="font-size:0.55em; color:#94a3b8; line-height:1.6;">
+                            POST /api/predict-live<br>
+                            GET /api/stream/preview<br>
+                            POST /api/stream/capture-ok<br>
+                            POST /api/stream/capture-ng<br>
+                            GET /api/captures/{filename}<br>
+                            GET /api/heatmaps/{filename}
+                        </div>
+                    </div>
+                </div>
+                <div class="fragment" style="margin-top: 18px;">
+                    <p style="font-size:0.65em; color:#94a3b8;">Todos los endpoints están documentados automáticamente en <span class="text-cyan">Swagger UI</span>: <code>http://localhost:8000/docs</code></p>
+                </div>
+            </section>
+
+            <!-- SLIDE 12: Calidad de Codigo -->
+            <section data-background="linear-gradient(135deg, #0b0f19, #312e81)">
+                <h2>Calidad de Código</h2>
+                <div class="card-grid card-grid-3" style="margin-top: 14px;">
+                    <div class="card fragment fade-up">
+                        <div class="card-title text-cyan">Type Hints</div>
+                        <div class="card-desc">Todas las funciones y clases públicas incluyen anotaciones de tipo (typing: Dict, List, Optional, Tuple, Any, Callable).</div>
+                    </div>
+                    <div class="card fragment fade-up">
+                        <div class="card-title text-purple">Docstrings</div>
+                        <div class="card-desc">Cada módulo, clase y función pública cuenta con docstring descriptiva siguiendo estándares profesionales.</div>
+                    </div>
+                    <div class="card fragment fade-up">
+                        <div class="card-title text-green">Modularidad</div>
+                        <div class="card-desc">Backend separado en módulos desacoplados: main, modbus_client, camera, trainer, config, find_plc.</div>
+                    </div>
+                    <div class="card fragment fade-up">
+                        <div class="card-title text-orange">Configuración Centralizada</div>
+                        <div class="card-desc">IPs, puertos, rutas y constantes centralizadas en config.py para evitar hardcoding disperso.</div>
+                    </div>
+                    <div class="card fragment fade-up">
+                        <div class="card-title text-red">Git Profesional</div>
+                        <div class="card-desc">Commits descriptivos, .gitignore completo (venv, binarios, imágenes, modelos) y flujo de trabajo limpio.</div>
+                    </div>
+                    <div class="card fragment fade-up">
+                        <div class="card-title" style="color:#fb923c">AGENTS.md</div>
+                        <div class="card-desc">Documentación técnica dirigida a agentes de IA y desarrolladores con detalles de hardware y protocolos.</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 13: Testing -->
+            <section data-background="linear-gradient(135deg, #0b0f19, #1e1b4b)">
+                <h2>Testing Automatizado</h2>
+                <div style="display:flex; justify-content:center; gap: 30px; margin-top: 20px;" class="fragment fade-up">
+                    <div style="text-align:center;">
+                        <div class="big-stat">38</div>
+                        <div style="font-size:0.65em; color:#94a3b8;">Tests totales</div>
+                    </div>
+                    <div style="text-align:center;">
+                        <div class="big-stat">17</div>
+                        <div style="font-size:0.65em; color:#94a3b8;">Tests de integración FastAPI</div>
+                    </div>
+                    <div style="text-align:center;">
+                        <div class="big-stat">6</div>
+                        <div style="font-size:0.65em; color:#94a3b8;">Módulos testeados</div>
+                    </div>
+                </div>
+                <table class="fragment" style="margin-top: 18px; font-size: 0.6em;">
+                    <thead>
+                        <tr><th>Archivo</th><th>Tests</th><th>Cobertura</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>test_config.py</td><td>1</td><td>Validación de constantes de red</td></tr>
+                        <tr><td>test_find_plc.py</td><td>4</td><td>Escaneo de red y conectividad Modbus</td></tr>
+                        <tr><td>test_camera.py</td><td>5</td><td>Gestión de webcam con mocks de OpenCV</td></tr>
+                        <tr><td>test_modbus_client.py</td><td>3</td><td>Inicialización, escrituras y ciclo de vida</td></tr>
+                        <tr><td>test_trainer.py</td><td>8</td><td>Calibración, guardado de datasets y preparación</td></tr>
+                        <tr><td>test_main.py</td><td>17</td><td>Tests de integración sobre todos los endpoints</td></tr>
+                    </tbody>
+                </table>
+                <div class="fragment" style="margin-top: 14px;">
+                    <pre style="width:auto; display:inline-block;"><code>cd backend
+.\venv\Scripts\python.exe -m pytest --cov=. --cov-report=term-missing tests/</code></pre>
+                </div>
+            </section>
+
+            <!-- SLIDE 14: Infraestructura & Docker -->
+            <section data-background="linear-gradient(135deg, #0b0f19, #1e293b)">
+                <h2>Infraestructura & Docker</h2>
+                <div class="two-col fragment fade-up" style="margin-top: 14px; font-size:0.72em;">
+                    <div>
+                        <div class="hl-bar" style="margin-bottom:12px;">
+                            <strong class="text-cyan">MediaMTX</strong><br>
+                            Servidor de streaming ligero que recibe RTMP y sirve WebRTC. Permite ver la cámara IP en el frontend con latencia inferior a 1 segundo.
+                        </div>
+                        <div class="hl-bar" style="margin-bottom:12px;">
+                            <strong class="text-purple">FFmpeg</strong><br>
+                            Puente RTSP (cámara IP Hikvision) &#8594; RTMP (MediaMTX). Transmisión continua con copia de codecs (-c copy) para mínima carga de CPU.
+                        </div>
+                    </div>
+                    <div>
+                        <div class="hl-bar" style="margin-bottom:12px;">
+                            <strong class="text-green">Docker Compose</strong><br>
+                            Orquestación de contenedores para MediaMTX y Nginx proxy. Aislamiento de servicios de red y fácil replicación del entorno CCTV.
+                        </div>
+                        <div class="hl-bar">
+                            <strong class="text-orange">Scripts Windows</strong><br>
+                            <code>start-all.bat</code> levanta backend + MediaMTX + FFmpeg + abre navegador.<br>
+                            <code>stop-all.bat</code> detiene todos los procesos limpiamente.
+                        </div>
+                    </div>
+                </div>
+                <div class="fragment" style="margin-top: 16px;">
+                    <div style="background:#0f172a; border:1px solid #334155; border-radius:10px; padding:10px 14px; font-size:0.58em; color:#94a3b8; display:inline-block; text-align:left;">
+                        <strong style="color:#fff;">docker-compose.yml servicios:</strong><br>
+                        - mediamtx: bluenviron/mediamtx (RTMP in / WebRTC out)<br>
+                        - nginx: proxy web estático y redirección de puertos
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 15: Buenas Practicas y Seguridad -->
+            <section data-background="linear-gradient(135deg, #0b0f19, #312e81)">
+                <h2>Buenas Prácticas & Seguridad</h2>
+                <div class="card-grid card-grid-2" style="margin-top: 14px;">
+                    <div class="card fragment fade-up">
+                        <div class="card-title text-cyan">Configuración por Entornos</div>
+                        <div class="card-desc">IPs, puertos y rutas externalizadas en <code>config.py</code>. Fácil adaptación a nuevas redes sin tocar lógica de negocio.</div>
+                    </div>
+                    <div class="card fragment fade-up">
+                        <div class="card-title text-purple">Separación de Secretos</div>
+                        <div class="card-desc">Aunque no hay login de usuarios, se evita hardcodear credenciales. La cámara IP usa RTSP sin password expuesto en código fuente.</div>
+                    </div>
+                    <div class="card fragment fade-up">
+                        <div class="card-title text-green">Thread-Safety</div>
+                        <div class="card-desc">Uso de locks y estados atómicos en el hilo de polling Modbus y en la máquina de estados de producción.</div>
+                    </div>
+                    <div class="card fragment fade-up">
+                        <div class="card-title text-orange">Cooldowns & Debounce</div>
+                        <div class="card-desc">Cooldown de 1.5 s entre triggers y 2 s entre piezas. El PLC ignora el sensor hasta que la placa anterior salga físicamente.</div>
+                    </div>
+                    <div class="card fragment fade-up">
+                        <div class="card-title text-red">Resiliencia</div>
+                        <div class="card-desc">Si el PLC no responde, el backend sigue operativo en modo manual. Si la webcam falla, se reporta sin crashear el servidor.</div>
+                    </div>
+                    <div class="card fragment fade-up">
+                        <div class="card-title" style="color:#a855f7">Documentación Dual</div>
+                        <div class="card-desc">README.md para humanos (instalación, uso) y AGENTS.md para desarrolladores/agentes IA (contexto técnico detallado).</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 16: Instalacion -->
+            <section data-background="linear-gradient(135deg, #0b0f19, #1e1b4b)">
+                <h2>Instalación y Ejecución</h2>
+                <div style="display: flex; justify-content: center; gap: 18px; margin-top: 14px; flex-wrap: wrap;" class="fragment fade-up">
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 18px; width: 260px;">
+                        <div class="badge badge-cyan" style="margin-bottom:10px;">Opción A: Recomendada</div>
+                        <div style="font-size:0.7em; color:#fff; font-weight:700;">start-all.bat</div>
+                        <div style="font-size:0.6em; color:#94a3b8; margin-top:6px;">
+                            Doble clic para iniciar MediaMTX + FFmpeg + Backend + Navegador. Ideal para demostraciones en Windows.
+                        </div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 18px; width: 260px;">
+                        <div class="badge badge-purple" style="margin-bottom:10px;">Opción B: Desarrollo</div>
+                        <div style="font-size:0.7em; color:#fff; font-weight:700;">Terminales Manuales</div>
+                        <div style="font-size:0.6em; color:#94a3b8; margin-top:6px;">
+                            Ejecuta MediaMTX, FFmpeg y Uvicorn en terminales separadas para debugging y recarga en caliente.
+                        </div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 18px; width: 260px;">
+                        <div class="badge badge-orange" style="margin-bottom:10px;">Opción C: Docker</div>
+                        <div style="font-size:0.7em; color:#fff; font-weight:700;">docker-compose up -d</div>
+                        <div style="font-size:0.6em; color:#94a3b8; margin-top:6px;">
+                            Levanta solo la infraestructura CCTV (MediaMTX + Nginx). Backend y FFmpeg nativos por acceso a GPU y red link-local.
+                        </div>
+                    </div>
+                </div>
+                <div class="fragment" style="margin-top: 16px;">
+                    <pre style="width:auto; display:inline-block; text-align:left;"><code># Requisitos clave
+- Python 3.12 + GPU NVIDIA (CUDA 12.4)
+- Webcam USB + M-Duino 21+ conectado por Ethernet
+- Cámara IP PoE en red link-local (opcional para CCTV)
+</code></pre>
+                </div>
+            </section>
+
+            <!-- SLIDE 17: Funcionalidades Principales -->
+            <section data-background="linear-gradient(135deg, #0b0f19, #1e293b)">
+                <h2>Funcionalidades Principales</h2>
+                <div class="two-col fragment fade-up" style="font-size:0.68em; color:#e2e8f0; margin-top: 8px;">
+                    <ul style="line-height:1.7;">
+                        <li><span class="text-cyan">Detección automática</span> de piezas vía sensor industrial</li>
+                        <li><span class="text-cyan">Parada inmediata</span> de la cinta por PLC</li>
+                        <li><span class="text-cyan">Captura 4MP</span> con precalentamiento y estabilización</li>
+                        <li><span class="text-cyan">Inferencia IA</span> en GPU en 50-100 ms</li>
+                        <li><span class="text-cyan">Calibración automática</span> de umbrales y AUROC</li>
+                        <li><span class="text-cyan">Heatmaps</span> superpuestos sobre la imagen original</li>
+                    </ul>
+                    <ul style="line-height:1.7;">
+                        <li><span class="text-purple">Control Modbus TCP</span> para arrancar/parar cinta</li>
+                        <li><span class="text-purple">CCTV en vivo</span> WebRTC de cámara IP PoE</li>
+                        <li><span class="text-purple">Entrenamiento interactivo</span> OK/NG desde el frontend</li>
+                        <li><span class="text-purple">API REST completa</span> con Swagger UI</li>
+                        <li><span class="text-green">38 tests automatizados</span> con cobertura</li>
+                        <li><span class="text-green">Despliegue híbrido</span> Docker + nativo</li>
+                        <li><span class="text-purple">Desarrollo asistido por IA</span> generativa (Kimi K2.6)</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- SLIDE 18: Valor Personal -->
+            <section data-background="linear-gradient(135deg, #0b0f19, #312e81)">
+                <h2>Valor Personal & Conocimientos Aplicados</h2>
+                <div class="card-grid card-grid-4" style="margin-top: 10px;">
+                    <div class="card fragment fade-up">
+                        <div class="card-title text-cyan">Software</div>
+                        <div class="card-desc">Python modular, API REST con FastAPI, diseño limpio.</div>
+                    </div>
+                    <div class="card fragment fade-up">
+                        <div class="card-title text-purple">IA / CV</div>
+                        <div class="card-desc">PatchCore (Anomalib), inferencia GPU, calibración automática.</div>
+                    </div>
+                    <div class="card fragment fade-up">
+                        <div class="card-title text-green">Calidad</div>
+                        <div class="card-desc">pytest, coverage, type hints, docstrings, Git.</div>
+                    </div>
+                    <div class="card fragment fade-up">
+                        <div class="card-title text-orange">Hardware</div>
+                        <div class="card-desc">PLC M-Duino, Modbus TCP, sensores, red link-local.</div>
+                    </div>
+                    <div class="card fragment fade-up">
+                        <div class="card-title text-red">DevOps</div>
+                        <div class="card-desc">Docker Compose, MediaMTX, FFmpeg, scripts Windows.</div>
+                    </div>
+                    <div class="card fragment fade-up">
+                        <div class="card-title" style="color:#fb923c">Streaming</div>
+                        <div class="card-desc">WebRTC, RTMP, RTSP, H265, CCTV en vivo.</div>
+                    </div>
+                    <div class="card fragment fade-up">
+                        <div class="card-title text-cyan">Testing</div>
+                        <div class="card-desc">38 tests automatizados con mocks de hardware.</div>
+                    </div>
+                    <div class="card fragment fade-up" style="border-color:rgba(168,85,247,0.4); background:rgba(168,85,247,0.08);">
+                        <div class="card-title text-purple">IA Generativa</div>
+                        <div class="card-desc"><strong>Kimi K2.6</strong> en VS Code: copiloto de código, tests y documentación. La IA <strong>multiplica</strong> al desarrollador.</div>
+                    </div>
+                </div>
+                <div class="hl-bar fragment" style="margin-top: 12px;">
+                    <strong class="text-cyan">Motivación:</strong> Fusionar automatización industrial con IA. Este TFM demuestra que un desarrollador potenciado con <strong>IA generativa</strong> puede entregar un sistema completo: hardware, backend, modelo entrenado por mí, tests y despliegue.
+                </div>
+            </section>
+
+            <!-- SLIDE 19: Entrega TFM Checklist -->
+            <section data-background="linear-gradient(135deg, #0b0f19, #1e1b4b)">
+                <h2>Entrega del TFM <span class="badge badge-green">Checklist</span></h2>
+                <div style="display:flex; justify-content:center; margin-top:14px;">
+                    <ul class="checklist" style="font-size:0.75em;">
+                        <li class="checked fragment">Documentación completa (README.md + AGENTS.md)</li>
+                        <li class="checked fragment">Repositorio GitHub público con código fuente</li>
+                        <li class="checked fragment">Despliegue local en funcionamiento (URL localhost)</li>
+                        <li class="checked fragment">Slides de presentación (Reveal.js)</li>
+                        <li class="checked fragment">Vídeo explicativo con captura de pantalla</li>
+                        <li class="checked fragment">Tests, calidad de código y cobertura</li>
+                        <li class="checked fragment">Docker + infraestructura documentada</li>
+                        <li class="checked fragment">Uso intensivo de <strong>IA generativa</strong> en todo el ciclo de desarrollo</li>
+                    </ul>
+                </div>
+                <div class="fragment" style="margin-top: 14px;">
+                    <div style="background: rgba(168,85,247,0.1); border: 1px solid rgba(168,85,247,0.3); border-radius: 12px; padding: 12px 18px; display:inline-block;">
+                        <div style="font-size:0.68em; color:#e2e8f0;">
+                            <strong style="color:#a855f7;">Diferenciador clave:</strong> Este TFM demuestra que un desarrollador potenciado con <strong>IA generativa</strong> (Kimi K2.6) puede entregar un sistema industrial completo: hardware, backend, modelo de IA entrenado por mí mismo, tests, documentación y despliegue.
+                        </div>
+                    </div>
+                </div>
+                <div class="fragment" style="margin-top: 14px;">
+                    <div style="background: rgba(0,212,255,0.08); border: 1px solid rgba(0,212,255,0.25); border-radius: 12px; padding: 16px; display:inline-block;">
+                        <div style="font-size:0.75em; color:#fff; font-weight:700;">Alejandro Rioja Chocrón</div>
+                        <div style="font-size:0.62em; color:#94a3b8; margin-top:5px;">
+                            Máster en Desarrollo con IA - 2ª Edición | BIGschool<br>
+                            Fecha de entrega: 20 de julio de 2026
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 20: Gracias -->
+            <section data-background="linear-gradient(135deg, #020617 0%, #0f172a 40%, #1e1b4b 100%)">
+                <h1 style="font-size: 2.6em; margin-bottom: 0.3em;">
+                    <span class="text-cyan">Gracias</span>
+                </h1>
+                <h3 style="font-weight:300; color:#94a3b8;">Conveyor Camera Monitor</h3>
+                <div style="margin-top: 30px;">
+                    <p style="font-size:0.72em; color:#cbd5e1;">
+                        <strong style="color:#fff;">Alejandro Rioja Chocrón</strong><br>
+                        TFM - Máster en Desarrollo con IA (2ª Edición)<br>
+                        <span class="text-cyan">BIGschool</span> | Julio 2026
+                    </p>
+                </div>
+                <div style="margin-top: 24px;">
+                    <div class="badge badge-cyan">Python</div>
+                    <div class="badge badge-purple">FastAPI</div>
+                    <div class="badge badge-green">PyTorch</div>
+                    <div class="badge badge-orange">Anomalib</div>
+                    <div class="badge badge-cyan">Modbus</div>
+                    <div class="badge badge-purple">Docker</div>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            slideNumber: 'c/t',
+            showSlideNumber: 'all',
+            transition: 'slide',
+            transitionSpeed: 'default',
+            backgroundTransition: 'fade',
+            width: 1280,
+            height: 720,
+            margin: 0.04,
+            center: true,
+            history: true,
+            plugins: []
+        });
+    </script>
+</body>
+</html>
