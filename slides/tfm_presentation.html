@@ -430,7 +430,7 @@
             <section data-background="linear-gradient(135deg, #0b0f19, #312e81)">
                 <h2>Descripción General del Proyecto</h2>
                 <p class="fragment fade-up" style="font-size:0.78em; color:#cbd5e1; max-width: 900px; margin: 10px auto;">
-                    <strong>Conveyor Camera Monitor</strong> es un sistema de inspección visual automática para líneas de producción industriales. Integra un PLC industrial, visión por computador, un <strong>modelo de IA entrenado por mí mismo</strong> con detección de anomalías (PatchCore) y una interfaz web de control en tiempo real. Además, todo el desarrollo ha sido <strong>potenciado con IA generativa</strong> (Kimi K2.6) como asistente de código.
+                    <strong>Conveyor Camera Monitor</strong> es un sistema de inspección visual automática para líneas de producción industriales. Integra un PLC industrial, visión por computador, un <strong>modelo de IA entrenado mediante aprendizaje no supervisado</strong> con un dataset propio de piezas OK/NG (PatchCore) y una interfaz web de control en tiempo real. Además, todo el desarrollo ha sido <strong>potenciado con IA generativa</strong> (Kimi K2.6) como asistente de código.
                 </p>
                 <div class="v-flow fragment" style="margin-top: 14px;">
                     <div class="flow-box">Sensor fotoelectrico detecta pieza</div>
@@ -668,7 +668,7 @@
                         <strong class="text-cyan">3.</strong> Arduino publica <strong>coil 0 = 1</strong> (pieza detectada) vía Modbus TCP.
                     </div>
                     <div class="fragment fade-up" style="padding:6px 0; border-bottom:1px solid #334155;">
-                        <strong class="text-cyan">4.</strong> Backend detecta coil 0 = 1, captura imagen 4MP y ejecuta <strong>inferencia con modelo PatchCore entrenado por mí</strong> en GPU RTX 4070.
+                        <strong class="text-cyan">4.</strong> Backend detecta coil 0 = 1, captura imagen 4MP y ejecuta <strong>inferencia con el modelo PatchCore entrenado mediante aprendizaje no supervisado</strong> en GPU RTX 4070.
                     </div>
                     <div class="fragment fade-up" style="padding:6px 0; border-bottom:1px solid #334155;">
                         <strong class="text-green">5. OK (IA):</strong> El modelo decide OK. Backend escribe <strong>coil 1 = 1</strong>. Arduino arranca cinta automáticamente.
@@ -703,7 +703,7 @@
                     </div>
                     <div class="card" style="padding:10px 12px;">
                         <div class="card-title text-green">Entrenamiento Real</div>
-                        <div class="card-desc">Modelo <strong>entrenado por mí</strong> con dataset propio OK/NG. Calibración: media OK 28.1, NG 60.7, umbral 40.92, AUROC sklearn.</div>
+                        <div class="card-desc">Modelo <strong>entrenado mediante aprendizaje no supervisado</strong> con dataset propio de piezas OK/NG OK/NG. Calibración: media OK 28.1, NG 60.7, umbral 40.92, AUROC sklearn.</div>
                     </div>
                     <div class="card" style="padding:10px 12px;">
                         <div class="card-title text-cyan">Inferencia GPU</div>
@@ -991,7 +991,7 @@
                     </div>
                 </div>
                 <div class="hl-bar fragment" style="margin-top: 12px;">
-                    <strong class="text-cyan">Motivación:</strong> Fusionar automatización industrial con IA. Este TFM demuestra que un desarrollador potenciado con <strong>IA generativa</strong> puede entregar un sistema completo: hardware, backend, modelo entrenado por mí, tests y despliegue.
+                    <strong class="text-cyan">Motivación:</strong> Fusionar automatización industrial con IA. Este TFM demuestra que un desarrollador potenciado con <strong>IA generativa</strong> puede entregar un sistema completo: hardware, backend, modelo entrenado mediante aprendizaje no supervisado, tests y despliegue.
                 </div>
             </section>
 
@@ -1013,7 +1013,7 @@
                 <div class="fragment" style="margin-top: 14px;">
                     <div style="background: rgba(168,85,247,0.1); border: 1px solid rgba(168,85,247,0.3); border-radius: 12px; padding: 12px 18px; display:inline-block;">
                         <div style="font-size:0.68em; color:#e2e8f0;">
-                            <strong style="color:#a855f7;">Diferenciador clave:</strong> Este TFM demuestra que un desarrollador potenciado con <strong>IA generativa</strong> (Kimi K2.6) puede entregar un sistema industrial completo: hardware, backend, modelo de IA entrenado por mí mismo, tests, documentación y despliegue.
+                            <strong style="color:#a855f7;">Diferenciador clave:</strong> Este TFM demuestra que un desarrollador potenciado con <strong>IA generativa</strong> (Kimi K2.6) puede entregar un sistema industrial completo: hardware, backend, modelo de IA entrenado mediante aprendizaje no supervisado, tests, documentación y despliegue.
                         </div>
                     </div>
                 </div>
