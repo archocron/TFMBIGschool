@@ -38,9 +38,28 @@ echo [1/4] Iniciando MediaMTX...
 taskkill /F /IM mediamtx.exe >nul 2>&1
 start "MediaMTX" mediamtx.exe cctv\mediamtx.yml
 
-REM === 3. Esperar a que MediaMTX arranque ===
-echo [2/4] Esperando MediaMTX (3s)...
-timeout /t 3 /nobreak >nul
+REM === 3. Esperar a que MediaMTX arranque realmente ===
+echo [2/4] Esperando MediaMTX...
+set /a attempts=0
+:wait_mediamtx
+powershell -Command "try { $r=Invoke-WebRequest -Uri 'http://localhost:9997/v3/paths/list' -UseBasicParsing -TimeoutSec 2; exit 0 } catch { exit 1 }" >nul 2>&1
+if %errorlevel% == 0 (
+    echo     MediaMTX listo.
+    goto mediamtx_ready
+)
+set /a attempts+=1
+if %attempts% GEQ 15 (
+    echo [ERROR] MediaMTX no arranco tras 15 segundos.
+    echo   Revisa que no haya otro proceso usando puerto 9997.
+    pause
+    exit /b 1
+)
+timeout /t 1 /nobreak >nul
+goto wait_mediamtx
+
+:mediamtx_ready
+REM Pequena pausa extra para que RTMP este realmente listo
+timeout /t 2 /nobreak >nul
 
 REM === 4. Iniciar FFmpeg (puente camara IP -> MediaMTX) ===
 echo [3/4] Iniciando FFmpeg (RTSP camara IP -> RTMP MediaMTX)...
