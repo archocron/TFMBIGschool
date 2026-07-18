@@ -16,7 +16,11 @@ Este proyecto ha sido desarrollado como **Trabajo de Fin de Máster (TFM)** del 
 
 ### Sistema en funcionamiento (modo productivo)
 
-![Modo productivo del sistema](slides/productivo.png)
+| Pieza OK (completa) | Pieza NG (condensador eliminado) |
+|:--:|:--:|
+| ![Modo productivo OK](slides/productivo_ok.jpg) | ![Modo productivo NG](slides/productivo.png) |
+
+*Izquierda: pieza OK con el condensador presente, heatmap en azul (score bajo). Derecha: pieza NG con el condensador eliminado, el heatmap en rojo resalta la zona del componente faltante (score alto).*
 
 ## b. Stack tecnológico utilizado
 
