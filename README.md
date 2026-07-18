@@ -1,5 +1,7 @@
 # Conveyor Camera Monitor
 
+> **Presentación del TFM:** [Ver slides online](https://archocron.github.io/TFMBIGschool/slides/tfm_presentation.html)
+
 ## a. Descripción general del proyecto
 
 **Conveyor Camera Monitor** es un sistema de inspección visual automática para líneas de producción industriales. El proyecto integra hardware industrial (PLC M-Duino 21+), visión por computador (webcam), inteligencia artificial (detección de anomalías con PatchCore) y un backend web para el control y monitorización en tiempo real.
