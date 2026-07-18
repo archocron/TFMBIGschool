@@ -285,6 +285,71 @@
         /* Utility: reduce heading margin */
         .tight h2 { margin-bottom: 0.3em; }
         .tight p { margin: 0.3em 0; }
+
+        /* Hardware images inside cards */
+        .hw-img {
+            height: 55px;
+            width: auto;
+            max-width: 100%;
+            background: #fff;
+            border-radius: 6px;
+            padding: 3px;
+            margin: 0 auto 8px auto;
+            object-fit: contain;
+            display: block;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        }
+        .hw-img-row {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            margin-bottom: 8px;
+        }
+        .hw-img-row .hw-img {
+            margin: 0;
+            height: 50px;
+            flex: 1 1 0;
+            max-width: 48%;
+        }
+
+        /* Context image (subtle, below flow) */
+        .ctx-img {
+            height: 90px;
+            width: auto;
+            background: #fff;
+            border-radius: 8px;
+            padding: 4px;
+            object-fit: cover;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        }
+
+        /* Annex screenshots */
+        .annex-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 14px;
+        }
+        .annex-item {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 10px;
+            padding: 8px;
+            text-align: center;
+        }
+        .annex-item img {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            border-radius: 6px;
+            background: #0f172a;
+            display: block;
+        }
+        .annex-item .annex-caption {
+            font-size: 0.6em;
+            color: #94a3b8;
+            margin-top: 6px;
+        }
     </style>
 </head>
 <body>
@@ -377,6 +442,9 @@
                     <div class="flow-box">Decisión: OK (reanuda) o NG (parada hasta revisión)</div>
                 </div>
                 <p style="font-size:0.6em; color:#64748b; margin-top: 10px;">Flujo de trabajo completamente automático con supervisión humana en NG</p>
+                <div class="fragment" style="margin-top: 12px;">
+                    <img class="ctx-img" src="mesa_trabajo.jpg" alt="Mesa de trabajo">
+                </div>
             </section>
 
             <!-- SLIDE 5: Hardware I -->
@@ -384,28 +452,37 @@
                 <h2>Hardware Industrial <span class="badge badge-orange">PARTE I</span></h2>
                 <div class="card-grid card-grid-3">
                     <div class="card fragment fade-up">
+                        <img class="hw-img" src="mduino.jpg" alt="M-Duino 21+">
                         <div class="card-title text-cyan">M-Duino 21+</div>
-                        <div class="card-desc">PLC de Industrial Shields basado en <strong>Arduino Mega 2560</strong> con Ethernet W5500 integrado. Actúa como servidor Modbus TCP y controlador de entradas/salidas industriales.</div>
+                        <div class="card-desc">PLC de Industrial Shields basado en <strong>Arduino Mega 2560</strong> con Ethernet W5500 integrado. Servidor Modbus TCP.</div>
                     </div>
                     <div class="card fragment fade-up">
+                        <img class="hw-img" src="sensor_fotoeletrico.jpeg" alt="Sensor GTB6-DC30">
                         <div class="card-title text-green">Sensor I0.0</div>
-                        <div class="card-desc">Interruptor fotoeléctrico cuadrado, sensor infrarrojo de supresión de fondo, inducción de límite, <strong>GTB6-DC30</strong>. Conectado a entrada digital I0_0 con respuesta en milisegundos.</div>
+                        <div class="card-desc">Interruptor fotoeléctrico cuadrado, sensor infrarrojo de supresión de fondo, <strong>GTB6-DC30</strong>. Respuesta en milisegundos.</div>
                     </div>
                     <div class="card fragment fade-up">
+                        <img class="hw-img" src="rele.jpg" alt="Relé ENMG HF41F-24-ZS">
                         <div class="card-title text-red">Relé Q0.0</div>
-                        <div class="card-desc">Relé intermedio delgado tipo interfaz <strong>ENMG HF41F-24-ZS</strong>, CC 5 V/12 V/24 V, kit de montaje en carril DIN con luces de barra de puente de módulo CC. <strong>HIGH = PARADA</strong>.</div>
+                        <div class="card-desc">Relé intermedio delgado tipo interfaz <strong>ENMG HF41F-24-ZS</strong>, CC 5/12/24 V, montaje en carril DIN. <strong>HIGH = PARADA</strong>.</div>
                     </div>
                     <div class="card fragment fade-up">
+                        <img class="hw-img" src="fuente_24v.jpg" alt="Fuente MZMW 24V">
                         <div class="card-title text-orange">Fuente 24V</div>
-                        <div class="card-desc"><strong>MZMW</strong> fuente de alimentación conmutada en carril DIN (MDR-10W / 20W / 40W / 60W / 100W). Mini interruptor industrial SMPS potencia 10A AC-DC salida única. Alimenta PLC, sensor y módulo de relé.</div>
+                        <div class="card-desc"><strong>MZMW</strong> fuente conmutada en carril DIN (MDR-10W a 100W). SMPS 10A AC-DC salida única.</div>
                     </div>
                     <div class="card fragment fade-up">
+                        <img class="hw-img" src="cinta transportadora.jpg" alt="Cinta transportadora">
                         <div class="card-title text-purple">Cinta Transportadora</div>
-                        <div class="card-desc">Cinta transportadora real de banda de PVC con motorreductor de 24 V. Transporta las placas de prueba bajo la cámara de inspección y se detiene bajo demanda del sistema de visión.</div>
+                        <div class="card-desc">Banda de PVC con motorreductor de 24 V. Transporta placas de ratón bajo la cámara de inspección.</div>
                     </div>
                     <div class="card fragment fade-up">
+                        <div class="hw-img-row">
+                            <img class="hw-img" src="placa_OK.jpg" alt="Placa OK">
+                            <img class="hw-img" src="placa_NG.jpg" alt="Placa NG">
+                        </div>
                         <div class="card-title" style="color:#fb923c">Placas de Ratón</div>
-                        <div class="card-desc">Placas de ratón reales utilizadas como piezas de prueba para calibrar el sistema. Incluye placas OK (sin defectos) y placas NG (con defectos simulados como arañazos o manchas).</div>
+                        <div class="card-desc">Piezas de prueba reales: placas OK (sin defectos) y NG (arañazos/manchas simulados).</div>
                     </div>
                 </div>
             </section>
@@ -415,20 +492,24 @@
                 <h2>Hardware de Visión <span class="badge badge-cyan">PARTE II</span></h2>
                 <div class="card-grid card-grid-2">
                     <div class="card fragment fade-up">
+                        <img class="hw-img" src="webcam.jpg" alt="Webcam Industrial 4K">
                         <div class="card-title text-cyan">Webcam Industrial 4K</div>
-                        <div class="card-desc">Cámara web industrial 4K 8MP IMX415 USB 2K 4MP sensor con lente varifocal de 5-50 mm, USB 2.0, UVC OTG. Captura de alta resolución usada por OpenCV con precalentamiento y estabilización.</div>
+                        <div class="card-desc">4K 8MP IMX415 USB, lente varifocal 5-50 mm. Alta resolución para inspección con OpenCV.</div>
                     </div>
                     <div class="card fragment fade-up">
+                        <img class="hw-img" src="POEIPCam.jpg" alt="Cámara IP PoE">
                         <div class="card-title text-purple">Cámara IP PoE HD</div>
-                        <div class="card-desc">Cámara PoE de transmisión en vivo digital 4K con audio HD industrial, IP de seguridad HD de 3/4/5/8MP, lente varifocal manual de 2,8-12 mm / 5-100 mm. Transmite en <strong>H265/HEVC</strong> vía RTSP.</div>
+                        <div class="card-desc">PoE digital 4K con audio HD, lente varifocal 2,8-12 mm / 5-100 mm. Transmite <strong>H265/HEVC</strong> vía RTSP.</div>
                     </div>
                     <div class="card fragment fade-up">
+                        <img class="hw-img" src="switchPOE.jpg" alt="Switch PoE Cudy GS105P">
                         <div class="card-title text-green">Switch PoE</div>
-                        <div class="card-desc"><strong>Cudy GS105P</strong> - Interruptor PoE Gigabit de 5 puertos (4 PoE+ 36 W). Montaje en escritorio/pared, plug and play, puertos de metal resistente/blindados con optimización del tráfico.</div>
+                        <div class="card-desc"><strong>Cudy GS105P</strong> - 5 puertos Gigabit (4 PoE+ 36 W). Plug and play, puertos metálicos blindados.</div>
                     </div>
                     <div class="card fragment fade-up">
+                        <img class="hw-img" src="usbtoethernet.jpg" alt="Loydia USB Ethernet 2.5G">
                         <div class="card-title text-orange">USB - Ethernet 2.5G</div>
-                        <div class="card-desc"><strong>Loydia</strong> adaptador USB-C a Ethernet 2.5G / USB 3.0. Adaptador Tipo-C a LAN RJ45 2500 Mbps, usbc a RJ45 Gigabit LAN Network Adapter. Proporciona interfaz de red dedicada al PC para el PLC.</div>
+                        <div class="card-desc"><strong>Loydia</strong> adaptador USB-C a Ethernet 2.5G / USB 3.0. LAN RJ45 2500 Mbps dedicada al PLC.</div>
                     </div>
                 </div>
                 <div class="hl-bar fragment" style="margin-top: 18px;">
@@ -947,7 +1028,30 @@
                 </div>
             </section>
 
-            <!-- SLIDE 20: Gracias -->
+            <!-- SLIDE 20: Anexo Capturas -->
+            <section data-background="linear-gradient(135deg, #0b0f19, #1e293b)">
+                <h2>Anexo <span class="badge badge-cyan">Sistema en Funcionamiento</span></h2>
+                <div class="annex-grid fragment fade-up">
+                    <div class="annex-item">
+                        <img src="IDE.png" alt="IDE en VS Code">
+                        <div class="annex-caption">IDE en VS Code con Kimi K2.6 (OpenCode)</div>
+                    </div>
+                    <div class="annex-item">
+                        <img src="consolas.png" alt="Consolas y logs">
+                        <div class="annex-caption">Consolas: MediaMTX + FFmpeg + Backend + Polling Modbus</div>
+                    </div>
+                    <div class="annex-item">
+                        <img src="Entrenamiento.png" alt="Entrenamiento del modelo">
+                        <div class="annex-caption">Entrenamiento de PatchCore con dataset OK/NG propio</div>
+                    </div>
+                    <div class="annex-item">
+                        <img src="productivo.png" alt="Modo productivo">
+                        <div class="annex-caption">Modo productivo: detección, inferencia IA y decisión OK/NG en vivo</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 21: Gracias -->
             <section data-background="linear-gradient(135deg, #020617 0%, #0f172a 40%, #1e1b4b 100%)">
                 <h1 style="font-size: 2.6em; margin-bottom: 0.3em;">
                     <span class="text-cyan">Gracias</span>
