@@ -12,6 +12,10 @@ Este proyecto ha sido desarrollado como **Trabajo de Fin de Máster (TFM)** del 
 
 > **Asistente de IA utilizado:** El desarrollo, refactorización, testing y documentación de este proyecto han sido potenciados con el asistente de código **Kimi K2.6** (OpenCode), integrado en el flujo de trabajo mediante VS Code y el modelo de IA local.
 
+### Sistema en funcionamiento (modo productivo)
+
+![Modo productivo del sistema](slides/productivo.png)
+
 ## b. Stack tecnológico utilizado
 
 | Capa | Tecnología | Uso |
