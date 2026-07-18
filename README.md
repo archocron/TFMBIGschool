@@ -1,6 +1,8 @@
 # Conveyor Camera Monitor
 
 > **Presentación del TFM:** [Ver slides online](https://archocron.github.io/TFMBIGschool/slides/tfm_presentation.html)
+>
+> **Vídeo explicativo del TFM:** [Ver en YouTube](https://www.youtube.com/watch?v=gTCSniSJNbU)
 
 ## a. Descripción general del proyecto
 
